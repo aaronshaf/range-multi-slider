@@ -1,0 +1,119 @@
+body {
+  font-family: sans-serif;
+}
+
+.gri-container {
+  height: 50px;
+  position: relative;
+}
+
+.gri-axis {
+  width: 100%;
+  height: 7px;
+  background-color: #D4D4D4;
+  border-radius: 7px;
+  position: absolute;
+  top: 7px;
+}
+
+.gri-selection-container {
+  position: absolute;
+  display: flex;
+  width: 100%;
+  top: 7px;
+  height: 7px;
+}
+
+.gri-selection-before {
+  flex: 8;
+}
+
+.gri-selection-after {
+  flex: 4;
+}
+
+.gri-selection {
+  flex: 5;
+  background-color: #0098E3;
+  height: 7px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.gri-knob {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 20px;
+  border: 1px solid #DADADA;
+  background-color: white;
+  /*box-shadow: 1px 1px 1px #999;*/
+}
+
+.gri-knob-dragging {
+  background-color: red;
+}
+
+.gri-grade-categories {
+  display: flex;
+  width: 100%;
+  position: absolute;
+  top: 56px;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+}
+
+.gri-grade-category {
+  text-align: center;
+}
+
+.gri-knobs {
+  display: flex;
+  width: 100%;
+}
+
+.gri-grades {
+  display: flex;
+  width: 100%;
+  position: absolute;
+  top: 7px;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.gri-grade:last-of-type {
+  
+}
+
+.gri-grade:last-of-type .gri-grade-division {
+  border-right: 1px solid #B3B3B3;
+}
+
+.gri-grade {
+  min-width: 14px;
+}
+
+.gri-grade-label {
+  text-align: center;
+  font-size: 0.76rem;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  margin-top: 3px;
+}
+
+.gri-grade-division {
+  height: 20px;
+  border-left: 1px solid #B3B3B3;
+}
+
+.green-grade-category {
+  background-color: #DDF3DF;
+}
+
+.red-grade-category {
+  background-color: #EADFE8;
+}
+
+.gri-debug {
+  margin-top: 50px;
+}
