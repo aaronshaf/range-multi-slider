@@ -46,11 +46,15 @@ body {
   border-radius: 20px;
   border: 1px solid #DADADA;
   background-color: white;
-  /*box-shadow: 1px 1px 1px #999;*/
+  /*cursor: grab;
+  cursor: -webkit-grab;
+  cursor: -moz-grab;
+  box-shadow: 1px 1px 1px #999;*/
 }
 
 .gri-knob-dragging {
   background-color2: red;
+  /*cursor: default;*/
 }
 
 .gri-grade-categories {

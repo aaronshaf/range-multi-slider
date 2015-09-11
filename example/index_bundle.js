@@ -59,7 +59,7 @@
 	var ukGrades = __webpack_require__(161);
 	var hkGrades = __webpack_require__(162);
 	
-	var values = ['5', '6', '7'];
+	var values = ['4', '3', '9'];
 	
 	React.render(React.createElement(
 	  'div',
@@ -73,12 +73,18 @@
 	      'US'
 	    ),
 	    React.createElement(GradeRangeInput, { grades: usGrades, values: values })
+	  ),
+	  React.createElement(
+	    'div',
+	    null,
+	    React.createElement(
+	      'h2',
+	      null,
+	      'HK'
+	    ),
+	    React.createElement(GradeRangeInput, { grades: hkGrades, values: values })
 	  )
 	), document.getElementById('app'));
-	/* <div>
-	 <h2>HK</h2>
-	 <GradeRangeInput grades={hkGrades} values={values} />
-	</div> */
 
 /***/ },
 /* 2 */
@@ -20467,6 +20473,7 @@
 	
 	var React = __webpack_require__(2);
 	var classnames = __webpack_require__(159);
+	var union = __webpack_require__(163);
 	
 	var Divisions = React.createClass({
 	  displayName: 'Divisions',
@@ -20561,13 +20568,6 @@
 	    values: React.PropTypes.arrayOf(React.PropTypes.any)
 	  },
 	
-	  /*
-	  getDefaultProps: function () {
-	    return {
-	     }
-	  },
-	  */
-	
 	  getInitialState: function getInitialState() {
 	    return {
 	      lowerBoundIndex: 5,
@@ -20589,16 +20589,13 @@
 	    this.setState({ left: left, right: right, pageX: pageX });
 	
 	    var newIndex;
-	    console.log({ left: left, pageX: pageX, right: right });
 	    if (pageX <= left) {
 	      newIndex = 0;
 	    } else if (pageX >= right) {
 	      newIndex = grades.length;
 	    } else {
 	
-	      var flexTotal = grades.reduce(function (previousValue, currentValue) {
-	        return previousValue + currentValue.flex;
-	      }, 0);
+	      var flexTotal = grades.reduce(accumulateFlex, 0);
 	
 	      var gradeNodes = React.findDOMNode(this.refs.grades).childNodes;
 	      var gradeNodesArray = Array.from(gradeNodes);
@@ -20617,44 +20614,7 @@
 	      } else {
 	        newIndex = indexOfCurrentNode + 1;
 	      }
-	
-	      // var flexWidth = (right - left) / flexTotal
-	      // var newFlex = Math.round(pageX / flexWidth)
-	      // console.log({newFlex})
-	
-	      /*
-	      newIndex = this.props.grades.reduce(function (previousValue, grade, index) {
-	        var cumulativeFlex = previousValue.previousFlex + grade.flex
-	        var middleFlex = previousValue.previousFlex + (grade.flex / 2)
-	         if (newFlex >= previousValue.previousFlex && newFlex <= middleFlex) {
-	          return {
-	            previousFlex: cumulativeFlex,
-	            index: index
-	          }
-	        }
-	         if (newFlex > middleFlex && newFlex <= previousValue.previousFlex + grade.flex) {
-	          return {
-	            previousFlex: cumulativeFlex,
-	            index: index + 1
-	          }
-	        }
-	         return {
-	          previousFlex: previousValue.previousFlex + grade.flex,
-	          index: previousValue.index
-	        }
-	      }, {
-	        previousFlex: 0,
-	        index: 0
-	      }).index
-	      */
 	    }
-	
-	    // console.log({
-	    //   newIndex,
-	    //   left,
-	    //   right,
-	    //   pageX
-	    // })
 	
 	    if (newIndex <= lowerBoundIndex) {
 	      this.setState({
@@ -20675,36 +20635,57 @@
 	    }
 	  },
 	
+	  determineBounds: function determineBounds() {
+	    var values = this.props.values;
+	    var grades = this.props.grades;
+	
+	    var lowerBoundIndex = grades.reduce(function (lowerBoundIndex, grade, index) {
+	      if (values.indexOf(grade.value) > -1 && !lowerBoundIndex) {
+	        return index;
+	      }
+	      return lowerBoundIndex;
+	    }, 0);
+	
+	    var upperBoundIndex = grades.reduceRight(function (upperBoundIndex, grade, index) {
+	      if (values.indexOf(grade.value) > -1 && !upperBoundIndex) {
+	        return index + 1;
+	      }
+	      return upperBoundIndex;
+	    }, 0);
+	
+	    this.setState({
+	      lowerBoundIndex: lowerBoundIndex,
+	      upperBoundIndex: upperBoundIndex || grades.length
+	    });
+	  },
+	
+	  componentWillMount: function componentWillMount() {
+	    this.determineBounds();
+	  },
+	
+	  componentWillReceiveProps: function componentWillReceiveProps() {
+	    this.determineBounds();
+	  },
+	
 	  render: function render() {
 	    var grades = this.props.grades;
 	    var lowerBoundIndex = this.state.lowerBoundIndex;
 	    var upperBoundIndex = this.state.upperBoundIndex;
 	
-	    // TODO: transform values props into bounds in state
+	    var flexTotal = grades.reduce(accumulateFlex, 0);
+	    var flexBeforeFirstKnob = grades.slice(0, lowerBoundIndex).reduce(accumulateFlex, 0);
+	    var flexBetweenKnobs = grades.slice(lowerBoundIndex, upperBoundIndex).reduce(accumulateFlex, 0);
+	    var flexAfterSecondKnob = grades.slice(upperBoundIndex).reduce(accumulateFlex, 0);
 	
-	    var flexTotal = grades.reduce(function (previousValue, currentValue) {
-	      return previousValue + currentValue.flex;
-	    }, 0);
-	
-	    var flexBeforeSelection = grades.slice(0, lowerBoundIndex).reduce(function (flex, grade) {
-	      return flex + grade.flex;
-	    }, 0);
-	    var selectionFlex = grades.slice(lowerBoundIndex, upperBoundIndex).reduce(function (flex, grade) {
-	      return flex + grade.flex;
-	    }, 0);
-	    var flexAfterSelection = grades.slice(upperBoundIndex).reduce(function (flex, grade) {
-	      return flex + grade.flex;
-	    }, 0);
-	
-	    console.debug({
-	      lowerBoundIndex: lowerBoundIndex,
-	      upperBoundIndex: upperBoundIndex,
-	      selectionFlex: selectionFlex,
-	      flexTotal: flexTotal,
-	      flexBeforeSelection: flexBeforeSelection,
-	      flexAfterSelection: flexAfterSelection,
-	      gradesLength: grades.length
-	    });
+	    // console.debug({
+	    //   lowerBoundIndex,
+	    //   upperBoundIndex,
+	    //   flexBetweenKnobs,
+	    //   flexTotal,
+	    //   flexBeforeFirstKnob,
+	    //   flexAfterSecondKnob,
+	    //   gradesLength: grades.length
+	    // })
 	
 	    var gradeComponents = grades.map(function (grade) {
 	      var label = grade.abbreviation || grade.label;
@@ -20718,47 +20699,40 @@
 	      return React.createElement("div", { key: grade.value + grade.label, className: "gri-grade", style: styles }, React.createElement("div", { className: "gri-grade-division" }), React.createElement("div", { className: labelClassNames }, label));
 	    });
 	
-	    var gradeCategories = grades.reduce(function (categories, grade) {
-	      var flex = grade.flex || 1;
-	      var lastCategory = categories.length ? categories[categories.length - 1] : null;
-	      var sameAsLastCategory = lastCategory && grade.category === lastCategory.label;
-	
-	      if (sameAsLastCategory) {
-	        categories[categories.length - 1].flex += flex;
-	        return categories;
-	      }
-	
-	      return categories.concat([{
-	        label: grade.category,
-	        flex: flex
-	      }]);
-	    }, []);
+	    var gradeCategories = grades.reduce(flattenCategories, []);
 	
 	    var gradeCategoryComponents = gradeCategories.map(function (category, index) {
 	      return React.createElement("div", { key: index, style: { flex: category.flex }, className: "gri-grade-category" }, category.label);
 	    });
 	
-	    var flexBeforeFirstKnob = flexBeforeSelection;
-	    var flexBetweenKnobs = selectionFlex;
-	    var flexAfterSecondKnob = flexAfterSelection;
-	
-	    return React.createElement("div", { ref: "container", className: "gri-container" }, React.createElement("div", { className: "gri-axis" }), React.createElement("div", { className: "gri-selection-container" }, React.createElement("div", { className: "gri-selection-before", style: { flex: flexBeforeSelection } }), React.createElement("div", { className: "gri-selection", style: { flex: selectionFlex } }), React.createElement("div", { className: "gri-selection-after", style: { flex: flexAfterSelection } })), React.createElement("div", { className: "gri-grades", ref: "grades" }, gradeComponents), React.createElement("div", { className: "gri-grade-categories" }, gradeCategoryComponents), React.createElement("div", { className: "gri-knobs" }, React.createElement("div", { style: { flex: flexBeforeFirstKnob, height: 5, backgroundColor2: 'red' } }), React.createElement(Knob, { onMove: this.handleKnobMove }), React.createElement("div", { style: { flex: flexBetweenKnobs, height: 5, backgroundColor2: 'black' } }), React.createElement(Knob, { onMove: this.handleKnobMove }), React.createElement("div", { style: { flex: flexAfterSecondKnob, height: 5, backgroundColor2: 'blue' } })), React.createElement("pre", { className: "gri-debug" }, JSON.stringify({
-	      flexBeforeSelection: flexBeforeSelection,
-	      selectionFlex: selectionFlex,
-	      flexAfterSelection: flexAfterSelection,
-	      flexBeforeFirstKnob: flexBeforeFirstKnob,
-	      flexBetweenKnobs: flexBetweenKnobs,
-	      flexAfterSecondKnob: flexAfterSecondKnob,
-	      flexTotal: flexTotal,
+	    return React.createElement("div", { ref: "container", className: "gri-container" }, React.createElement("div", { className: "gri-axis" }), React.createElement("div", { className: "gri-selection-container" }, React.createElement("div", { className: "gri-selection-before", style: { flex: flexBeforeFirstKnob } }), React.createElement("div", { className: "gri-selection", style: { flex: flexBetweenKnobs } }), React.createElement("div", { className: "gri-selection-after", style: { flex: flexAfterSecondKnob } })), React.createElement("div", { className: "gri-grades", ref: "grades" }, gradeComponents), React.createElement("div", { className: "gri-grade-categories" }, gradeCategoryComponents), React.createElement("div", { className: "gri-knobs" }, React.createElement("div", { style: { flex: flexBeforeFirstKnob, height: 5, backgroundColor2: 'red' } }), React.createElement(Knob, { onMove: this.handleKnobMove }), React.createElement("div", { style: { flex: flexBetweenKnobs, height: 5, backgroundColor2: 'black' } }), React.createElement(Knob, { onMove: this.handleKnobMove }), React.createElement("div", { style: { flex: flexAfterSecondKnob, height: 5, backgroundColor2: 'blue' } })), React.createElement("pre", { className: "gri-debug" }, JSON.stringify({
 	      lowerBoundIndex: lowerBoundIndex,
 	      upperBoundIndex: upperBoundIndex,
-	      gradesLength: grades.length,
-	      pageX: this.state.pageX,
-	      left: this.state.left,
-	      right: this.state.right
+	      gradesLength: grades.length
 	    }, null, 2)));
 	  }
 	});
+	
+	function accumulateFlex(flex, grade) {
+	  return flex + grade.flex;
+	}
+	
+	function flattenCategories(categories, grade) {
+	  var flex = grade.flex || 1;
+	  var lastCategory = categories.length ? categories[categories.length - 1] : null;
+	  var sameAsLastCategory = lastCategory && grade.category === lastCategory.label;
+	
+	  if (sameAsLastCategory) {
+	    // TODO: don't mutate
+	    categories[categories.length - 1].flex += flex;
+	    return categories;
+	  }
+	
+	  return categories.concat([{
+	    label: grade.category,
+	    flex: flex
+	  }]);
+	}
 
 /***/ },
 /* 159 */
@@ -21121,6 +21095,762 @@
 	  flex: 2
 	}];
 	module.exports = exports['default'];
+
+/***/ },
+/* 163 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseFlatten = __webpack_require__(164),
+	    baseUniq = __webpack_require__(177),
+	    restParam = __webpack_require__(184);
+	
+	/**
+	 * Creates an array of unique values, in order, from all of the provided arrays
+	 * using [`SameValueZero`](http://ecma-international.org/ecma-262/6.0/#sec-samevaluezero)
+	 * for equality comparisons.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Array
+	 * @param {...Array} [arrays] The arrays to inspect.
+	 * @returns {Array} Returns the new array of combined values.
+	 * @example
+	 *
+	 * _.union([1, 2], [4, 2], [2, 1]);
+	 * // => [1, 2, 4]
+	 */
+	var union = restParam(function(arrays) {
+	  return baseUniq(baseFlatten(arrays, false, true));
+	});
+	
+	module.exports = union;
+
+
+/***/ },
+/* 164 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var arrayPush = __webpack_require__(165),
+	    isArguments = __webpack_require__(166),
+	    isArray = __webpack_require__(172),
+	    isArrayLike = __webpack_require__(167),
+	    isObjectLike = __webpack_require__(171);
+	
+	/**
+	 * The base implementation of `_.flatten` with added support for restricting
+	 * flattening and specifying the start index.
+	 *
+	 * @private
+	 * @param {Array} array The array to flatten.
+	 * @param {boolean} [isDeep] Specify a deep flatten.
+	 * @param {boolean} [isStrict] Restrict flattening to arrays-like objects.
+	 * @param {Array} [result=[]] The initial result value.
+	 * @returns {Array} Returns the new flattened array.
+	 */
+	function baseFlatten(array, isDeep, isStrict, result) {
+	  result || (result = []);
+	
+	  var index = -1,
+	      length = array.length;
+	
+	  while (++index < length) {
+	    var value = array[index];
+	    if (isObjectLike(value) && isArrayLike(value) &&
+	        (isStrict || isArray(value) || isArguments(value))) {
+	      if (isDeep) {
+	        // Recursively flatten arrays (susceptible to call stack limits).
+	        baseFlatten(value, isDeep, isStrict, result);
+	      } else {
+	        arrayPush(result, value);
+	      }
+	    } else if (!isStrict) {
+	      result[result.length] = value;
+	    }
+	  }
+	  return result;
+	}
+	
+	module.exports = baseFlatten;
+
+
+/***/ },
+/* 165 */
+/***/ function(module, exports) {
+
+	/**
+	 * Appends the elements of `values` to `array`.
+	 *
+	 * @private
+	 * @param {Array} array The array to modify.
+	 * @param {Array} values The values to append.
+	 * @returns {Array} Returns `array`.
+	 */
+	function arrayPush(array, values) {
+	  var index = -1,
+	      length = values.length,
+	      offset = array.length;
+	
+	  while (++index < length) {
+	    array[offset + index] = values[index];
+	  }
+	  return array;
+	}
+	
+	module.exports = arrayPush;
+
+
+/***/ },
+/* 166 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isArrayLike = __webpack_require__(167),
+	    isObjectLike = __webpack_require__(171);
+	
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+	
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+	
+	/** Native method references. */
+	var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+	
+	/**
+	 * Checks if `value` is classified as an `arguments` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isArguments(function() { return arguments; }());
+	 * // => true
+	 *
+	 * _.isArguments([1, 2, 3]);
+	 * // => false
+	 */
+	function isArguments(value) {
+	  return isObjectLike(value) && isArrayLike(value) &&
+	    hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee');
+	}
+	
+	module.exports = isArguments;
+
+
+/***/ },
+/* 167 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getLength = __webpack_require__(168),
+	    isLength = __webpack_require__(170);
+	
+	/**
+	 * Checks if `value` is array-like.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+	 */
+	function isArrayLike(value) {
+	  return value != null && isLength(getLength(value));
+	}
+	
+	module.exports = isArrayLike;
+
+
+/***/ },
+/* 168 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseProperty = __webpack_require__(169);
+	
+	/**
+	 * Gets the "length" property value of `object`.
+	 *
+	 * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
+	 * that affects Safari on at least iOS 8.1-8.3 ARM64.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @returns {*} Returns the "length" value.
+	 */
+	var getLength = baseProperty('length');
+	
+	module.exports = getLength;
+
+
+/***/ },
+/* 169 */
+/***/ function(module, exports) {
+
+	/**
+	 * The base implementation of `_.property` without support for deep paths.
+	 *
+	 * @private
+	 * @param {string} key The key of the property to get.
+	 * @returns {Function} Returns the new function.
+	 */
+	function baseProperty(key) {
+	  return function(object) {
+	    return object == null ? undefined : object[key];
+	  };
+	}
+	
+	module.exports = baseProperty;
+
+
+/***/ },
+/* 170 */
+/***/ function(module, exports) {
+
+	/**
+	 * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
+	 * of an array-like value.
+	 */
+	var MAX_SAFE_INTEGER = 9007199254740991;
+	
+	/**
+	 * Checks if `value` is a valid array-like length.
+	 *
+	 * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+	 */
+	function isLength(value) {
+	  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+	}
+	
+	module.exports = isLength;
+
+
+/***/ },
+/* 171 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is object-like.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+	
+	module.exports = isObjectLike;
+
+
+/***/ },
+/* 172 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getNative = __webpack_require__(173),
+	    isLength = __webpack_require__(170),
+	    isObjectLike = __webpack_require__(171);
+	
+	/** `Object#toString` result references. */
+	var arrayTag = '[object Array]';
+	
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+	
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objToString = objectProto.toString;
+	
+	/* Native method references for those with the same name as other `lodash` methods. */
+	var nativeIsArray = getNative(Array, 'isArray');
+	
+	/**
+	 * Checks if `value` is classified as an `Array` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isArray([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArray(function() { return arguments; }());
+	 * // => false
+	 */
+	var isArray = nativeIsArray || function(value) {
+	  return isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag;
+	};
+	
+	module.exports = isArray;
+
+
+/***/ },
+/* 173 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isNative = __webpack_require__(174);
+	
+	/**
+	 * Gets the native function at `key` of `object`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @param {string} key The key of the method to get.
+	 * @returns {*} Returns the function if it's native, else `undefined`.
+	 */
+	function getNative(object, key) {
+	  var value = object == null ? undefined : object[key];
+	  return isNative(value) ? value : undefined;
+	}
+	
+	module.exports = getNative;
+
+
+/***/ },
+/* 174 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isFunction = __webpack_require__(175),
+	    isObjectLike = __webpack_require__(171);
+	
+	/** Used to detect host constructors (Safari > 5). */
+	var reIsHostCtor = /^\[object .+?Constructor\]$/;
+	
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+	
+	/** Used to resolve the decompiled source of functions. */
+	var fnToString = Function.prototype.toString;
+	
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+	
+	/** Used to detect if a method is native. */
+	var reIsNative = RegExp('^' +
+	  fnToString.call(hasOwnProperty).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
+	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+	);
+	
+	/**
+	 * Checks if `value` is a native function.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
+	 * @example
+	 *
+	 * _.isNative(Array.prototype.push);
+	 * // => true
+	 *
+	 * _.isNative(_);
+	 * // => false
+	 */
+	function isNative(value) {
+	  if (value == null) {
+	    return false;
+	  }
+	  if (isFunction(value)) {
+	    return reIsNative.test(fnToString.call(value));
+	  }
+	  return isObjectLike(value) && reIsHostCtor.test(value);
+	}
+	
+	module.exports = isNative;
+
+
+/***/ },
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isObject = __webpack_require__(176);
+	
+	/** `Object#toString` result references. */
+	var funcTag = '[object Function]';
+	
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+	
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objToString = objectProto.toString;
+	
+	/**
+	 * Checks if `value` is classified as a `Function` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isFunction(_);
+	 * // => true
+	 *
+	 * _.isFunction(/abc/);
+	 * // => false
+	 */
+	function isFunction(value) {
+	  // The use of `Object#toString` avoids issues with the `typeof` operator
+	  // in older versions of Chrome and Safari which return 'function' for regexes
+	  // and Safari 8 which returns 'object' for typed array constructors.
+	  return isObject(value) && objToString.call(value) == funcTag;
+	}
+	
+	module.exports = isFunction;
+
+
+/***/ },
+/* 176 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(1);
+	 * // => false
+	 */
+	function isObject(value) {
+	  // Avoid a V8 JIT bug in Chrome 19-20.
+	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+	  var type = typeof value;
+	  return !!value && (type == 'object' || type == 'function');
+	}
+	
+	module.exports = isObject;
+
+
+/***/ },
+/* 177 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseIndexOf = __webpack_require__(178),
+	    cacheIndexOf = __webpack_require__(180),
+	    createCache = __webpack_require__(181);
+	
+	/** Used as the size to enable large array optimizations. */
+	var LARGE_ARRAY_SIZE = 200;
+	
+	/**
+	 * The base implementation of `_.uniq` without support for callback shorthands
+	 * and `this` binding.
+	 *
+	 * @private
+	 * @param {Array} array The array to inspect.
+	 * @param {Function} [iteratee] The function invoked per iteration.
+	 * @returns {Array} Returns the new duplicate free array.
+	 */
+	function baseUniq(array, iteratee) {
+	  var index = -1,
+	      indexOf = baseIndexOf,
+	      length = array.length,
+	      isCommon = true,
+	      isLarge = isCommon && length >= LARGE_ARRAY_SIZE,
+	      seen = isLarge ? createCache() : null,
+	      result = [];
+	
+	  if (seen) {
+	    indexOf = cacheIndexOf;
+	    isCommon = false;
+	  } else {
+	    isLarge = false;
+	    seen = iteratee ? [] : result;
+	  }
+	  outer:
+	  while (++index < length) {
+	    var value = array[index],
+	        computed = iteratee ? iteratee(value, index, array) : value;
+	
+	    if (isCommon && value === value) {
+	      var seenIndex = seen.length;
+	      while (seenIndex--) {
+	        if (seen[seenIndex] === computed) {
+	          continue outer;
+	        }
+	      }
+	      if (iteratee) {
+	        seen.push(computed);
+	      }
+	      result.push(value);
+	    }
+	    else if (indexOf(seen, computed, 0) < 0) {
+	      if (iteratee || isLarge) {
+	        seen.push(computed);
+	      }
+	      result.push(value);
+	    }
+	  }
+	  return result;
+	}
+	
+	module.exports = baseUniq;
+
+
+/***/ },
+/* 178 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var indexOfNaN = __webpack_require__(179);
+	
+	/**
+	 * The base implementation of `_.indexOf` without support for binary searches.
+	 *
+	 * @private
+	 * @param {Array} array The array to search.
+	 * @param {*} value The value to search for.
+	 * @param {number} fromIndex The index to search from.
+	 * @returns {number} Returns the index of the matched value, else `-1`.
+	 */
+	function baseIndexOf(array, value, fromIndex) {
+	  if (value !== value) {
+	    return indexOfNaN(array, fromIndex);
+	  }
+	  var index = fromIndex - 1,
+	      length = array.length;
+	
+	  while (++index < length) {
+	    if (array[index] === value) {
+	      return index;
+	    }
+	  }
+	  return -1;
+	}
+	
+	module.exports = baseIndexOf;
+
+
+/***/ },
+/* 179 */
+/***/ function(module, exports) {
+
+	/**
+	 * Gets the index at which the first occurrence of `NaN` is found in `array`.
+	 *
+	 * @private
+	 * @param {Array} array The array to search.
+	 * @param {number} fromIndex The index to search from.
+	 * @param {boolean} [fromRight] Specify iterating from right to left.
+	 * @returns {number} Returns the index of the matched `NaN`, else `-1`.
+	 */
+	function indexOfNaN(array, fromIndex, fromRight) {
+	  var length = array.length,
+	      index = fromIndex + (fromRight ? 0 : -1);
+	
+	  while ((fromRight ? index-- : ++index < length)) {
+	    var other = array[index];
+	    if (other !== other) {
+	      return index;
+	    }
+	  }
+	  return -1;
+	}
+	
+	module.exports = indexOfNaN;
+
+
+/***/ },
+/* 180 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isObject = __webpack_require__(176);
+	
+	/**
+	 * Checks if `value` is in `cache` mimicking the return signature of
+	 * `_.indexOf` by returning `0` if the value is found, else `-1`.
+	 *
+	 * @private
+	 * @param {Object} cache The cache to search.
+	 * @param {*} value The value to search for.
+	 * @returns {number} Returns `0` if `value` is found, else `-1`.
+	 */
+	function cacheIndexOf(cache, value) {
+	  var data = cache.data,
+	      result = (typeof value == 'string' || isObject(value)) ? data.set.has(value) : data.hash[value];
+	
+	  return result ? 0 : -1;
+	}
+	
+	module.exports = cacheIndexOf;
+
+
+/***/ },
+/* 181 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {var SetCache = __webpack_require__(182),
+	    getNative = __webpack_require__(173);
+	
+	/** Native method references. */
+	var Set = getNative(global, 'Set');
+	
+	/* Native method references for those with the same name as other `lodash` methods. */
+	var nativeCreate = getNative(Object, 'create');
+	
+	/**
+	 * Creates a `Set` cache object to optimize linear searches of large arrays.
+	 *
+	 * @private
+	 * @param {Array} [values] The values to cache.
+	 * @returns {null|Object} Returns the new cache object if `Set` is supported, else `null`.
+	 */
+	function createCache(values) {
+	  return (nativeCreate && Set) ? new SetCache(values) : null;
+	}
+	
+	module.exports = createCache;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 182 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(global) {var cachePush = __webpack_require__(183),
+	    getNative = __webpack_require__(173);
+	
+	/** Native method references. */
+	var Set = getNative(global, 'Set');
+	
+	/* Native method references for those with the same name as other `lodash` methods. */
+	var nativeCreate = getNative(Object, 'create');
+	
+	/**
+	 *
+	 * Creates a cache object to store unique values.
+	 *
+	 * @private
+	 * @param {Array} [values] The values to cache.
+	 */
+	function SetCache(values) {
+	  var length = values ? values.length : 0;
+	
+	  this.data = { 'hash': nativeCreate(null), 'set': new Set };
+	  while (length--) {
+	    this.push(values[length]);
+	  }
+	}
+	
+	// Add functions to the `Set` cache.
+	SetCache.prototype.push = cachePush;
+	
+	module.exports = SetCache;
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+/***/ },
+/* 183 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isObject = __webpack_require__(176);
+	
+	/**
+	 * Adds `value` to the cache.
+	 *
+	 * @private
+	 * @name push
+	 * @memberOf SetCache
+	 * @param {*} value The value to cache.
+	 */
+	function cachePush(value) {
+	  var data = this.data;
+	  if (typeof value == 'string' || isObject(value)) {
+	    data.set.add(value);
+	  } else {
+	    data.hash[value] = true;
+	  }
+	}
+	
+	module.exports = cachePush;
+
+
+/***/ },
+/* 184 */
+/***/ function(module, exports) {
+
+	/** Used as the `TypeError` message for "Functions" methods. */
+	var FUNC_ERROR_TEXT = 'Expected a function';
+	
+	/* Native method references for those with the same name as other `lodash` methods. */
+	var nativeMax = Math.max;
+	
+	/**
+	 * Creates a function that invokes `func` with the `this` binding of the
+	 * created function and arguments from `start` and beyond provided as an array.
+	 *
+	 * **Note:** This method is based on the [rest parameter](https://developer.mozilla.org/Web/JavaScript/Reference/Functions/rest_parameters).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Function
+	 * @param {Function} func The function to apply a rest parameter to.
+	 * @param {number} [start=func.length-1] The start position of the rest parameter.
+	 * @returns {Function} Returns the new function.
+	 * @example
+	 *
+	 * var say = _.restParam(function(what, names) {
+	 *   return what + ' ' + _.initial(names).join(', ') +
+	 *     (_.size(names) > 1 ? ', & ' : '') + _.last(names);
+	 * });
+	 *
+	 * say('hello', 'fred', 'barney', 'pebbles');
+	 * // => 'hello fred, barney, & pebbles'
+	 */
+	function restParam(func, start) {
+	  if (typeof func != 'function') {
+	    throw new TypeError(FUNC_ERROR_TEXT);
+	  }
+	  start = nativeMax(start === undefined ? (func.length - 1) : (+start || 0), 0);
+	  return function() {
+	    var args = arguments,
+	        index = -1,
+	        length = nativeMax(args.length - start, 0),
+	        rest = Array(length);
+	
+	    while (++index < length) {
+	      rest[index] = args[start + index];
+	    }
+	    switch (start) {
+	      case 0: return func.call(this, rest);
+	      case 1: return func.call(this, args[0], rest);
+	      case 2: return func.call(this, args[0], args[1], rest);
+	    }
+	    var otherArgs = Array(start + 1);
+	    index = -1;
+	    while (++index < start) {
+	      otherArgs[index] = args[index];
+	    }
+	    otherArgs[start] = rest;
+	    return func.apply(this, otherArgs);
+	  };
+	}
+	
+	module.exports = restParam;
+
 
 /***/ }
 /******/ ]);

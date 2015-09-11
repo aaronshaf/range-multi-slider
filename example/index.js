@@ -4,7 +4,7 @@ var usGrades = require('../data/us')
 var ukGrades = require('../data/uk')
 var hkGrades = require('../data/hk')
 
-var values = ['5','6','7']
+var values = ['4','3','9']
 
 React.render(
   <div>
@@ -12,10 +12,10 @@ React.render(
       <h2>US</h2>
       <GradeRangeInput grades={usGrades} values={values} />
     </div>
-    {/* <div>
+    <div>
       <h2>HK</h2>
       <GradeRangeInput grades={hkGrades} values={values} />
-    </div> */}
+    </div>
   </div>,
   document.getElementById('app')
 )

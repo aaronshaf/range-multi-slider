@@ -5,6 +5,7 @@ Some methods derived from github.com/mpowaga/react-slider (MIT)
 
 var React = require('react')
 var classnames = require('classnames')
+var union = require('lodash/array/union')
 
 var Divisions = React.createClass({
   displayName: 'Divisions',
@@ -102,14 +103,6 @@ module.exports = React.createClass({
     values: React.PropTypes.arrayOf(React.PropTypes.any)
   },
 
-  /*
-  getDefaultProps: function () {
-    return {
-
-    }
-  },
-  */
-
   getInitialState: function () {
     return {
       lowerBoundIndex: 5,
@@ -131,16 +124,13 @@ module.exports = React.createClass({
     this.setState({left, right, pageX})
 
     var newIndex
-    console.log({left, pageX, right})
     if (pageX <= left) {
       newIndex = 0
     } else if (pageX >= right) {
       newIndex = grades.length
     } else {
 
-      var flexTotal = grades.reduce(function (previousValue, currentValue) {
-        return previousValue + currentValue.flex
-      }, 0)
+      var flexTotal = grades.reduce(accumulateFlex, 0)
 
       var gradeNodes = React.findDOMNode(this.refs.grades).childNodes
       var gradeNodesArray = Array.from(gradeNodes)
@@ -160,47 +150,7 @@ module.exports = React.createClass({
       } else { 
         newIndex = indexOfCurrentNode + 1
       }
-
-      // var flexWidth = (right - left) / flexTotal
-      // var newFlex = Math.round(pageX / flexWidth)
-      // console.log({newFlex})
-
-      /*
-      newIndex = this.props.grades.reduce(function (previousValue, grade, index) {
-        var cumulativeFlex = previousValue.previousFlex + grade.flex
-        var middleFlex = previousValue.previousFlex + (grade.flex / 2)
-
-        if (newFlex >= previousValue.previousFlex && newFlex <= middleFlex) {
-          return {
-            previousFlex: cumulativeFlex,
-            index: index
-          }
-        }
-
-        if (newFlex > middleFlex && newFlex <= previousValue.previousFlex + grade.flex) {
-          return {
-            previousFlex: cumulativeFlex,
-            index: index + 1
-          }
-        }
-
-        return {
-          previousFlex: previousValue.previousFlex + grade.flex,
-          index: previousValue.index
-        }
-      }, {
-        previousFlex: 0,
-        index: 0
-      }).index
-      */
     }
-
-    // console.log({
-    //   newIndex,
-    //   left,
-    //   right,
-    //   pageX
-    // })
 
     if (newIndex <= lowerBoundIndex) {
       this.setState({
@@ -221,36 +171,57 @@ module.exports = React.createClass({
     }
   },
 
+  determineBounds: function () {
+    var values = this.props.values
+    var grades = this.props.grades
+
+    var lowerBoundIndex = grades.reduce(function (lowerBoundIndex, grade, index) {
+      if (values.indexOf(grade.value) > -1 && !lowerBoundIndex) {
+        return index
+      }
+      return lowerBoundIndex
+    }, 0)
+
+    var upperBoundIndex = grades.reduceRight(function (upperBoundIndex, grade, index) {
+      if (values.indexOf(grade.value) > -1 && !upperBoundIndex) {
+        return index + 1
+      }
+      return upperBoundIndex
+    }, 0)
+
+    this.setState({
+      lowerBoundIndex,
+      upperBoundIndex: upperBoundIndex || grades.length
+    })
+  },
+
+  componentWillMount: function () {
+    this.determineBounds()
+  },
+
+  componentWillReceiveProps: function () {
+    this.determineBounds()
+  },
+
   render: function () {
     var grades = this.props.grades
     var lowerBoundIndex = this.state.lowerBoundIndex
     var upperBoundIndex = this.state.upperBoundIndex
 
-    // TODO: transform values props into bounds in state
+    var flexTotal = grades.reduce(accumulateFlex, 0)
+    var flexBeforeFirstKnob = grades.slice(0, lowerBoundIndex).reduce(accumulateFlex, 0)
+    var flexBetweenKnobs = grades.slice(lowerBoundIndex, upperBoundIndex).reduce(accumulateFlex, 0)
+    var flexAfterSecondKnob = grades.slice(upperBoundIndex).reduce(accumulateFlex, 0)
 
-    var flexTotal = grades.reduce(function (previousValue, currentValue) {
-      return previousValue + currentValue.flex
-    }, 0)
-
-    var flexBeforeSelection = grades.slice(0, lowerBoundIndex).reduce(function (flex, grade) {
-      return flex + grade.flex
-    }, 0)
-    var selectionFlex = grades.slice(lowerBoundIndex, upperBoundIndex).reduce(function (flex, grade) {
-      return flex + grade.flex
-    }, 0)
-    var flexAfterSelection = grades.slice(upperBoundIndex).reduce(function (flex, grade) {
-      return flex + grade.flex
-    }, 0)
-
-    console.debug({
-      lowerBoundIndex,
-      upperBoundIndex,
-      selectionFlex,
-      flexTotal,
-      flexBeforeSelection,
-      flexAfterSelection,
-      gradesLength: grades.length
-    })
+    // console.debug({
+    //   lowerBoundIndex,
+    //   upperBoundIndex,
+    //   flexBetweenKnobs,
+    //   flexTotal,
+    //   flexBeforeFirstKnob,
+    //   flexAfterSecondKnob,
+    //   gradesLength: grades.length
+    // })
     
     var gradeComponents = grades.map(function (grade) {
       var label = grade.abbreviation || grade.label
@@ -271,21 +242,7 @@ module.exports = React.createClass({
       )      
     })
 
-    var gradeCategories = grades.reduce(function (categories, grade) {
-      var flex = grade.flex || 1
-      var lastCategory = categories.length ? categories[categories.length - 1] : null
-      var sameAsLastCategory = lastCategory && grade.category === lastCategory.label
-
-      if (sameAsLastCategory) {
-        categories[categories.length - 1].flex += flex
-        return categories        
-      }
-
-      return categories.concat([{
-        label: grade.category,
-        flex: flex
-      }])
-    }, [])
+    var gradeCategories = grades.reduce(flattenCategories, [])
 
     var gradeCategoryComponents = gradeCategories.map(function (category, index) {
       return (
@@ -295,17 +252,13 @@ module.exports = React.createClass({
       )
     })
 
-    var flexBeforeFirstKnob = flexBeforeSelection
-    var flexBetweenKnobs = selectionFlex
-    var flexAfterSecondKnob = flexAfterSelection
-
     return (
       <div ref='container' className='gri-container'>
         <div className='gri-axis'></div>
         <div className='gri-selection-container'>
-          <div className='gri-selection-before' style={{flex: flexBeforeSelection}}></div>
-          <div className='gri-selection' style={{flex: selectionFlex}}></div>
-          <div className='gri-selection-after' style={{flex: flexAfterSelection}}></div>
+          <div className='gri-selection-before' style={{flex: flexBeforeFirstKnob}}></div>
+          <div className='gri-selection' style={{flex: flexBetweenKnobs}}></div>
+          <div className='gri-selection-after' style={{flex: flexAfterSecondKnob}}></div>
         </div>
         <div className='gri-grades' ref='grades'>
           {gradeComponents}
@@ -322,22 +275,33 @@ module.exports = React.createClass({
         </div>
         <pre className='gri-debug'>
           {JSON.stringify({
-            flexBeforeSelection,
-            selectionFlex,
-            flexAfterSelection,
-            flexBeforeFirstKnob,
-            flexBetweenKnobs,
-            flexAfterSecondKnob,
-            flexTotal,
             lowerBoundIndex,
             upperBoundIndex,
-            gradesLength: grades.length,
-            pageX: this.state.pageX,
-            left: this.state.left,
-            right: this.state.right
+            gradesLength: grades.length
           }, null, 2)}
         </pre>
       </div>
     )
   }
 })
+
+function accumulateFlex (flex, grade) {
+  return flex + grade.flex
+}
+
+function flattenCategories (categories, grade) {
+      var flex = grade.flex || 1
+      var lastCategory = categories.length ? categories[categories.length - 1] : null
+      var sameAsLastCategory = lastCategory && grade.category === lastCategory.label
+
+      if (sameAsLastCategory) {
+        // TODO: don't mutate
+        categories[categories.length - 1].flex += flex
+        return categories        
+      }
+
+      return categories.concat([{
+        label: grade.category,
+        flex: flex
+      }])
+    }
