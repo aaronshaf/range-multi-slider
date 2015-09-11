@@ -113,7 +113,10 @@ module.exports = React.createClass({
   getInitialState: function () {
     return {
       lowerBoundIndex: 5,
-      upperBoundIndex: 8
+      upperBoundIndex: 8,
+      left: null,
+      pageX: null,
+      right: null
     }
   },
 
@@ -125,11 +128,14 @@ module.exports = React.createClass({
     var left = React.findDOMNode(this.refs.grades).firstChild.getBoundingClientRect().left
     var right = React.findDOMNode(this.refs.grades).lastChild.getBoundingClientRect().right
 
+    this.setState({left, right, pageX})
+
     var newIndex
+    console.log({left, pageX, right})
     if (pageX <= left) {
       newIndex = 0
     } else if (pageX >= right) {
-      newIndex = this.refs.grades.length
+      newIndex = grades.length
     } else {
       var flexTotal = grades.reduce(function (previousValue, currentValue) {
         return previousValue + currentValue.flex
@@ -137,7 +143,7 @@ module.exports = React.createClass({
 
       var flexWidth = (right - left) / flexTotal
       var newFlex = Math.round(pageX / flexWidth)
-      console.log({newFlex})
+      // console.log({newFlex})
 
       newIndex = this.props.grades.reduce(function (previousValue, grade, index) {
         var cumulativeFlex = previousValue.previousFlex + grade.flex
@@ -204,17 +210,18 @@ module.exports = React.createClass({
       return previousValue + currentValue.flex
     }, 0)
 
-    var selectionBeforeFlex = lowerBoundIndex
+    var flexBeforeSelection = lowerBoundIndex
     var selectionFlex = upperBoundIndex - lowerBoundIndex
-    var selectionAfterFlex = flexTotal - upperBoundIndex
+    var flexAfterSelection = flexTotal - upperBoundIndex
 
     console.debug({
       lowerBoundIndex,
       upperBoundIndex,
-      flexTotal,
-      selectionBeforeFlex,
       selectionFlex,
-      selectionAfterFlex
+      flexTotal,
+      flexBeforeSelection,
+      flexAfterSelection,
+      gradesLength: grades.length
     })
     
     var gradeComponents = grades.map(function (grade) {
@@ -260,15 +267,17 @@ module.exports = React.createClass({
       )
     })
 
+    var flexBeforeFirstKnob = flexBeforeSelection
+    var flexBetweenKnobs = selectionFlex
+    var flexAfterSecondKnob = flexAfterSelection
+
     return (
       <div ref='container' className='gri-container'>
         <div className='gri-axis'></div>
         <div className='gri-selection-container'>
-          <div className='gri-selection-before' style={{flex: selectionBeforeFlex}}></div>
-          <div className='gri-selection' style={{flex: selectionFlex}}>
-
-          </div>
-          <div className='gri-selection-after' style={{flex: selectionAfterFlex}}></div>
+          <div className='gri-selection-before' style={{flex: flexBeforeSelection}}></div>
+          <div className='gri-selection' style={{flex: selectionFlex}}></div>
+          <div className='gri-selection-after' style={{flex: flexAfterSelection}}></div>
         </div>
         <div className='gri-grades' ref='grades'>
           {gradeComponents}
@@ -277,15 +286,27 @@ module.exports = React.createClass({
           {gradeCategoryComponents}
         </div>
         <div className='gri-knobs'>
-          <div style={{flex: selectionBeforeFlex, height: 5, backgroundColor: 'red'}}></div>
+          <div style={{flex: flexBeforeFirstKnob, height: 5, backgroundColor2: 'red'}}></div>
           <Knob onMove={this.handleKnobMove} />
-          <div style={{flex: selectionAfterFlex + 3, height: 5, backgroundColor: 'blue'}}></div>
+          <div style={{flex: flexBetweenKnobs, height: 5, backgroundColor2: 'black'}}></div>
+          <Knob onMove={this.handleKnobMove} />
+          <div style={{flex: flexAfterSecondKnob, height: 5, backgroundColor2: 'blue'}}></div>
         </div>
         <pre className='gri-debug'>
           {JSON.stringify({
-            selectionBeforeFlex,
-            selectionAfterFlex,
-            flexTotal
+            flexBeforeSelection,
+            selectionFlex,
+            flexAfterSelection,
+            flexBeforeFirstKnob,
+            flexBetweenKnobs,
+            flexAfterSecondKnob,
+            flexTotal,
+            lowerBoundIndex,
+            upperBoundIndex,
+            gradesLength: grades.length,
+            pageX: this.state.pageX,
+            left: this.state.left,
+            right: this.state.right
           }, null, 2)}
         </pre>
       </div>

@@ -36,12 +36,11 @@ body {
   flex: 5;
   background-color: #0098E3;
   height: 7px;
-  margin-left: 10px;
-  margin-right: 10px;
 }
 
 .gri-knob {
   position: absolute;
+  margin-left: -10px;
   width: 20px;
   height: 20px;
   border-radius: 20px;
@@ -51,7 +50,7 @@ body {
 }
 
 .gri-knob-dragging {
-  background-color: red;
+  background-color2: red;
 }
 
 .gri-grade-categories {
@@ -67,18 +66,16 @@ body {
   text-align: center;
 }
 
-.gri-knobs {
-  display: flex;
-  width: 100%;
+.gri-grades {
+  top: 7px;
 }
 
-.gri-grades {
-  display: flex;
-  width: 100%;
+.gri-grades,
+.gri-knobs {
   position: absolute;
-  top: 7px;
-  margin-left: 10px;
-  margin-right: 10px;
+  display: flex;
+  left: 10px;
+  right: 10px;
 }
 
 .gri-grade:last-of-type {
@@ -115,5 +112,6 @@ body {
 }
 
 .gri-debug {
-  margin-top: 50px;
+  top: 50px;
+  position: absolute;
 }

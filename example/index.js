@@ -12,10 +12,10 @@ React.render(
       <h2>US</h2>
       <GradeRangeInput grades={usGrades} values={values} />
     </div>
-    <div>
+    {/* <div>
       <h2>HK</h2>
       <GradeRangeInput grades={hkGrades} values={values} />
-    </div>
+    </div> */}
   </div>,
   document.getElementById('app')
 )

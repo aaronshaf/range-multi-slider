@@ -73,18 +73,12 @@
 	      'US'
 	    ),
 	    React.createElement(GradeRangeInput, { grades: usGrades, values: values })
-	  ),
-	  React.createElement(
-	    'div',
-	    null,
-	    React.createElement(
-	      'h2',
-	      null,
-	      'HK'
-	    ),
-	    React.createElement(GradeRangeInput, { grades: hkGrades, values: values })
 	  )
 	), document.getElementById('app'));
+	/* <div>
+	 <h2>HK</h2>
+	 <GradeRangeInput grades={hkGrades} values={values} />
+	</div> */
 
 /***/ },
 /* 2 */
@@ -20577,7 +20571,10 @@
 	  getInitialState: function getInitialState() {
 	    return {
 	      lowerBoundIndex: 5,
-	      upperBoundIndex: 8
+	      upperBoundIndex: 8,
+	      left: null,
+	      pageX: null,
+	      right: null
 	    };
 	  },
 	
@@ -20589,11 +20586,14 @@
 	    var left = React.findDOMNode(this.refs.grades).firstChild.getBoundingClientRect().left;
 	    var right = React.findDOMNode(this.refs.grades).lastChild.getBoundingClientRect().right;
 	
+	    this.setState({ left: left, right: right, pageX: pageX });
+	
 	    var newIndex;
+	    console.log({ left: left, pageX: pageX, right: right });
 	    if (pageX <= left) {
 	      newIndex = 0;
 	    } else if (pageX >= right) {
-	      newIndex = this.refs.grades.length;
+	      newIndex = grades.length;
 	    } else {
 	      var flexTotal = grades.reduce(function (previousValue, currentValue) {
 	        return previousValue + currentValue.flex;
@@ -20601,7 +20601,7 @@
 	
 	      var flexWidth = (right - left) / flexTotal;
 	      var newFlex = Math.round(pageX / flexWidth);
-	      console.log({ newFlex: newFlex });
+	      // console.log({newFlex})
 	
 	      newIndex = this.props.grades.reduce(function (previousValue, grade, index) {
 	        var cumulativeFlex = previousValue.previousFlex + grade.flex;
@@ -20668,17 +20668,18 @@
 	      return previousValue + currentValue.flex;
 	    }, 0);
 	
-	    var selectionBeforeFlex = lowerBoundIndex;
+	    var flexBeforeSelection = lowerBoundIndex;
 	    var selectionFlex = upperBoundIndex - lowerBoundIndex;
-	    var selectionAfterFlex = flexTotal - upperBoundIndex;
+	    var flexAfterSelection = flexTotal - upperBoundIndex;
 	
 	    console.debug({
 	      lowerBoundIndex: lowerBoundIndex,
 	      upperBoundIndex: upperBoundIndex,
-	      flexTotal: flexTotal,
-	      selectionBeforeFlex: selectionBeforeFlex,
 	      selectionFlex: selectionFlex,
-	      selectionAfterFlex: selectionAfterFlex
+	      flexTotal: flexTotal,
+	      flexBeforeSelection: flexBeforeSelection,
+	      flexAfterSelection: flexAfterSelection,
+	      gradesLength: grades.length
 	    });
 	
 	    var gradeComponents = grades.map(function (grade) {
@@ -20713,10 +20714,24 @@
 	      return React.createElement("div", { key: index, style: { flex: category.flex }, className: "gri-grade-category" }, category.label);
 	    });
 	
-	    return React.createElement("div", { ref: "container", className: "gri-container" }, React.createElement("div", { className: "gri-axis" }), React.createElement("div", { className: "gri-selection-container" }, React.createElement("div", { className: "gri-selection-before", style: { flex: selectionBeforeFlex } }), React.createElement("div", { className: "gri-selection", style: { flex: selectionFlex } }), React.createElement("div", { className: "gri-selection-after", style: { flex: selectionAfterFlex } })), React.createElement("div", { className: "gri-grades", ref: "grades" }, gradeComponents), React.createElement("div", { className: "gri-grade-categories" }, gradeCategoryComponents), React.createElement("div", { className: "gri-knobs" }, React.createElement("div", { style: { flex: selectionBeforeFlex, height: 5, backgroundColor: 'red' } }), React.createElement(Knob, { onMove: this.handleKnobMove }), React.createElement("div", { style: { flex: selectionAfterFlex + 3, height: 5, backgroundColor: 'blue' } })), React.createElement("pre", { className: "gri-debug" }, JSON.stringify({
-	      selectionBeforeFlex: selectionBeforeFlex,
-	      selectionAfterFlex: selectionAfterFlex,
-	      flexTotal: flexTotal
+	    var flexBeforeFirstKnob = flexBeforeSelection;
+	    var flexBetweenKnobs = selectionFlex;
+	    var flexAfterSecondKnob = flexAfterSelection;
+	
+	    return React.createElement("div", { ref: "container", className: "gri-container" }, React.createElement("div", { className: "gri-axis" }), React.createElement("div", { className: "gri-selection-container" }, React.createElement("div", { className: "gri-selection-before", style: { flex: flexBeforeSelection } }), React.createElement("div", { className: "gri-selection", style: { flex: selectionFlex } }), React.createElement("div", { className: "gri-selection-after", style: { flex: flexAfterSelection } })), React.createElement("div", { className: "gri-grades", ref: "grades" }, gradeComponents), React.createElement("div", { className: "gri-grade-categories" }, gradeCategoryComponents), React.createElement("div", { className: "gri-knobs" }, React.createElement("div", { style: { flex: flexBeforeFirstKnob, height: 5, backgroundColor2: 'red' } }), React.createElement(Knob, { onMove: this.handleKnobMove }), React.createElement("div", { style: { flex: flexBetweenKnobs, height: 5, backgroundColor2: 'black' } }), React.createElement(Knob, { onMove: this.handleKnobMove }), React.createElement("div", { style: { flex: flexAfterSecondKnob, height: 5, backgroundColor2: 'blue' } })), React.createElement("pre", { className: "gri-debug" }, JSON.stringify({
+	      flexBeforeSelection: flexBeforeSelection,
+	      selectionFlex: selectionFlex,
+	      flexAfterSelection: flexAfterSelection,
+	      flexBeforeFirstKnob: flexBeforeFirstKnob,
+	      flexBetweenKnobs: flexBetweenKnobs,
+	      flexAfterSecondKnob: flexAfterSecondKnob,
+	      flexTotal: flexTotal,
+	      lowerBoundIndex: lowerBoundIndex,
+	      upperBoundIndex: upperBoundIndex,
+	      gradesLength: grades.length,
+	      pageX: this.state.pageX,
+	      left: this.state.left,
+	      right: this.state.right
 	    }, null, 2)));
 	  }
 	});
