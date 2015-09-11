@@ -266,11 +266,11 @@ module.exports = React.createClass({
           gradeCategoryComponents
         ), 
         React.createElement("div", {className: "gri-knobs"}, 
-          React.createElement("div", {style: {flex: flexBeforeFirstKnob, height: 5, backgroundColor2: 'red'}}), 
+          React.createElement("div", {className: "gri-knob-spacer", style: {flex: flexBeforeFirstKnob}}), 
           React.createElement(Knob, {onMove: this.handleKnobMove}), 
-          React.createElement("div", {style: {flex: flexBetweenKnobs, height: 5, backgroundColor2: 'black'}}), 
+          React.createElement("div", {className: "gri-knob-spacer", style: {flex: flexBetweenKnobs}}), 
           React.createElement(Knob, {onMove: this.handleKnobMove}), 
-          React.createElement("div", {style: {flex: flexAfterSecondKnob, height: 5, backgroundColor2: 'blue'}})
+          React.createElement("div", {className: "gri-knob-spacer", style: {flex: flexAfterSecondKnob}})
         ), 
         React.createElement("pre", {className: "gri-debug"}, 
           JSON.stringify({

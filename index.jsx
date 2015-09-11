@@ -267,11 +267,11 @@ module.exports = React.createClass({
           {gradeCategoryComponents}
         </div>
         <div className='gri-knobs'>
-          <div style={{flex: flexBeforeFirstKnob, height: 5, backgroundColor2: 'red'}}></div>
+          <div className='gri-knob-spacer' style={{flex: flexBeforeFirstKnob}}></div>
           <Knob onMove={this.handleKnobMove} />
-          <div style={{flex: flexBetweenKnobs, height: 5, backgroundColor2: 'black'}}></div>
+          <div className='gri-knob-spacer' style={{flex: flexBetweenKnobs}}></div>
           <Knob onMove={this.handleKnobMove} />
-          <div style={{flex: flexAfterSecondKnob, height: 5, backgroundColor2: 'blue'}}></div>
+          <div className='gri-knob-spacer' style={{flex: flexAfterSecondKnob}}></div>
         </div>
         <pre className='gri-debug'>
           {JSON.stringify({
