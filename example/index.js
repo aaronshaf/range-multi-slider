@@ -6,16 +6,24 @@ var hkGrades = require('../data/hk')
 
 var values = ['4','3','9']
 
-React.render(
-  <div>
+function handleChange (newValues) {
+  values = newValues
+  render()
+}
+function render () {
+  React.render(
     <div>
-      <h2>US</h2>
-      <GradeRangeInput grades={usGrades} values={values} />
-    </div>
-    <div>
-      <h2>HK</h2>
-      <GradeRangeInput grades={hkGrades} values={values} />
-    </div>
-  </div>,
-  document.getElementById('app')
-)
+      <div>
+        <h2>US</h2>
+        <GradeRangeInput grades={usGrades} values={values} onChange={handleChange} />
+      </div>
+      <div>
+        <h2>HK</h2>
+        <GradeRangeInput grades={hkGrades} values={values} onChange={handleChange} />
+      </div>
+    </div>,
+    document.getElementById('app')
+  )
+}
+
+render()

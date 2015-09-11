@@ -5,7 +5,6 @@ Some methods derived from github.com/mpowaga/react-slider (MIT)
 
 var React = require('react')
 var classnames = require('classnames')
-var union = require('lodash/array/union')
 
 var Divisions = React.createClass({
   displayName: 'Divisions',
