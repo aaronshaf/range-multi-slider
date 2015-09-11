@@ -151,23 +151,27 @@ module.exports = React.createClass({
       }
     }
 
-    if (newIndex <= lowerBoundIndex) {
+    if (newIndex < lowerBoundIndex) {
       this.setState({
         lowerBoundIndex: newIndex
       })
-    } else if (newIndex >= upperBoundIndex) {
+    } else if (newIndex > upperBoundIndex) {
       this.setState({
         upperBoundIndex: newIndex
       })
-    } else if (newIndex <= lowerBoundIndex + (upperBoundIndex - lowerBoundIndex) / 2) {
+    } else if (newIndex > lowerBoundIndex && newIndex <= lowerBoundIndex + (upperBoundIndex - lowerBoundIndex) / 2) {
       this.setState({
         lowerBoundIndex: newIndex
       })
-    } else {
+    } else if (newIndex < upperBoundIndex && newIndex > lowerBoundIndex + (upperBoundIndex - lowerBoundIndex) / 2) {
       this.setState({
         upperBoundIndex: newIndex
       })
     }
+  },
+
+  checkForChange: function () {
+
   },
 
   determineBounds: function () {
