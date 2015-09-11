@@ -128,8 +128,6 @@ module.exports = React.createClass({
     var left = React.findDOMNode(this.refs.grades).firstChild.getBoundingClientRect().left
     var right = React.findDOMNode(this.refs.grades).lastChild.getBoundingClientRect().right
 
-    debugger
-
     this.setState({left, right, pageX})
 
     var newIndex
@@ -139,14 +137,35 @@ module.exports = React.createClass({
     } else if (pageX >= right) {
       newIndex = grades.length
     } else {
+
       var flexTotal = grades.reduce(function (previousValue, currentValue) {
         return previousValue + currentValue.flex
       }, 0)
 
-      var flexWidth = (right - left) / flexTotal
-      var newFlex = Math.round(pageX / flexWidth)
+      var gradeNodes = React.findDOMNode(this.refs.grades).childNodes
+      var gradeNodesArray = Array.from(gradeNodes)
+      var currentNode = gradeNodesArray.find(function (node) {
+        var left = React.findDOMNode(node).firstChild.getBoundingClientRect().left
+        var right = React.findDOMNode(node).lastChild.getBoundingClientRect().right
+        return pageX >= left && pageX <= right
+      })
+      var indexOfCurrentNode = gradeNodesArray.indexOf(currentNode)
+
+
+      var left = React.findDOMNode(currentNode).firstChild.getBoundingClientRect().left
+      var right = React.findDOMNode(currentNode).lastChild.getBoundingClientRect().right
+      var middle = left + ((right - left) / 2)
+      if(pageX <= middle) {
+        newIndex = indexOfCurrentNode
+      } else { 
+        newIndex = indexOfCurrentNode + 1
+      }
+
+      // var flexWidth = (right - left) / flexTotal
+      // var newFlex = Math.round(pageX / flexWidth)
       // console.log({newFlex})
 
+      /*
       newIndex = this.props.grades.reduce(function (previousValue, grade, index) {
         var cumulativeFlex = previousValue.previousFlex + grade.flex
         var middleFlex = previousValue.previousFlex + (grade.flex / 2)
@@ -173,6 +192,7 @@ module.exports = React.createClass({
         previousFlex: 0,
         index: 0
       }).index
+      */
     }
 
     // console.log({
