@@ -8,6 +8,7 @@ var values = ['4','3','9']
 
 function handleChange (newValues) {
   values = newValues
+  console.log(newValues)
   render()
 }
 function render () {

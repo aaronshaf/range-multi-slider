@@ -154,24 +154,28 @@ module.exports = React.createClass({
     if (newIndex < lowerBoundIndex) {
       this.setState({
         lowerBoundIndex: newIndex
-      })
+      }, this.triggerChange)
     } else if (newIndex > upperBoundIndex) {
       this.setState({
         upperBoundIndex: newIndex
-      })
+      }, this.triggerChange)
     } else if (newIndex > lowerBoundIndex && newIndex <= lowerBoundIndex + (upperBoundIndex - lowerBoundIndex) / 2) {
       this.setState({
         lowerBoundIndex: newIndex
-      })
+      }, this.triggerChange)
     } else if (newIndex < upperBoundIndex && newIndex > lowerBoundIndex + (upperBoundIndex - lowerBoundIndex) / 2) {
       this.setState({
         upperBoundIndex: newIndex
-      })
+      }, this.triggerChange)
     }
   },
 
-  checkForChange: function () {
-
+  triggerChange: function () {
+    var newGrades = this.props.grades.slice(this.state.lowerBoundIndex, this.state.upperBoundIndex)
+    var newValues = newGrades.map(function (grade) {
+      return grade.value
+    })
+    this.props.onChange(newValues)
   },
 
   determineBounds: function () {
@@ -203,7 +207,8 @@ module.exports = React.createClass({
   },
 
   componentWillReceiveProps: function () {
-    this.determineBounds()
+    // Needed?
+    // this.determineBounds()
   },
 
   render: function () {

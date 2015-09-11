@@ -63,6 +63,7 @@
 	
 	function handleChange(newValues) {
 	  values = newValues;
+	  console.log(newValues);
 	  render();
 	}
 	function render() {
@@ -20623,23 +20624,31 @@
 	      }
 	    }
 	
-	    if (newIndex <= lowerBoundIndex) {
+	    if (newIndex < lowerBoundIndex) {
 	      this.setState({
 	        lowerBoundIndex: newIndex
-	      });
-	    } else if (newIndex >= upperBoundIndex) {
+	      }, this.triggerChange);
+	    } else if (newIndex > upperBoundIndex) {
 	      this.setState({
 	        upperBoundIndex: newIndex
-	      });
-	    } else if (newIndex <= lowerBoundIndex + (upperBoundIndex - lowerBoundIndex) / 2) {
+	      }, this.triggerChange);
+	    } else if (newIndex > lowerBoundIndex && newIndex <= lowerBoundIndex + (upperBoundIndex - lowerBoundIndex) / 2) {
 	      this.setState({
 	        lowerBoundIndex: newIndex
-	      });
-	    } else {
+	      }, this.triggerChange);
+	    } else if (newIndex < upperBoundIndex && newIndex > lowerBoundIndex + (upperBoundIndex - lowerBoundIndex) / 2) {
 	      this.setState({
 	        upperBoundIndex: newIndex
-	      });
+	      }, this.triggerChange);
 	    }
+	  },
+	
+	  triggerChange: function triggerChange() {
+	    var newGrades = this.props.grades.slice(this.state.lowerBoundIndex, this.state.upperBoundIndex);
+	    var newValues = newGrades.map(function (grade) {
+	      return grade.value;
+	    });
+	    this.props.onChange(newValues);
 	  },
 	
 	  determineBounds: function determineBounds() {
@@ -20671,7 +20680,7 @@
 	  },
 	
 	  componentWillReceiveProps: function componentWillReceiveProps() {
-	    this.determineBounds();
+	    // this.determineBounds()
 	  },
 	
 	  render: function render() {
