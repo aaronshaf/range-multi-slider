@@ -128,6 +128,8 @@ module.exports = React.createClass({
     var left = React.findDOMNode(this.refs.grades).firstChild.getBoundingClientRect().left
     var right = React.findDOMNode(this.refs.grades).lastChild.getBoundingClientRect().right
 
+    debugger
+
     this.setState({left, right, pageX})
 
     var newIndex
