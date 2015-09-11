@@ -20686,9 +20686,15 @@
 	      return previousValue + currentValue.flex;
 	    }, 0);
 	
-	    var flexBeforeSelection = lowerBoundIndex;
-	    var selectionFlex = upperBoundIndex - lowerBoundIndex;
-	    var flexAfterSelection = flexTotal - upperBoundIndex;
+	    var flexBeforeSelection = grades.slice(0, lowerBoundIndex).reduce(function (flex, grade) {
+	      return flex + grade.flex;
+	    }, 0);
+	    var selectionFlex = grades.slice(lowerBoundIndex, upperBoundIndex).reduce(function (flex, grade) {
+	      return flex + grade.flex;
+	    }, 0);
+	    var flexAfterSelection = grades.slice(upperBoundIndex).reduce(function (flex, grade) {
+	      return flex + grade.flex;
+	    }, 0);
 	
 	    console.debug({
 	      lowerBoundIndex: lowerBoundIndex,
