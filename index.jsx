@@ -207,8 +207,7 @@ module.exports = React.createClass({
   },
 
   componentWillReceiveProps: function () {
-    // Needed?
-    // this.determineBounds()
+    this.determineBounds()
   },
 
   render: function () {
@@ -281,13 +280,13 @@ module.exports = React.createClass({
           <Knob onMove={this.handleKnobMove} />
           <div className='gri-knob-spacer' style={{flex: flexAfterSecondKnob}}></div>
         </div>
-        <pre className='gri-debug'>
+        {/* <pre className='gri-debug'>
           {JSON.stringify({
             lowerBoundIndex,
             upperBoundIndex,
             gradesLength: grades.length
           }, null, 2)}
-        </pre>
+        </pre> */}
       </div>
     )
   }

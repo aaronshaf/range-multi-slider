@@ -206,7 +206,7 @@ module.exports = React.createClass({
   },
 
   componentWillReceiveProps: function () {
-    // this.determineBounds()
+    this.determineBounds()
   },
 
   render: function () {
@@ -278,14 +278,14 @@ module.exports = React.createClass({
           React.createElement("div", {className: "gri-knob-spacer", style: {flex: flexBetweenKnobs}}), 
           React.createElement(Knob, {onMove: this.handleKnobMove}), 
           React.createElement("div", {className: "gri-knob-spacer", style: {flex: flexAfterSecondKnob}})
-        ), 
-        React.createElement("pre", {className: "gri-debug"}, 
-          JSON.stringify({
+        )
+        /* <pre className='gri-debug'>
+          {JSON.stringify({
             lowerBoundIndex,
             upperBoundIndex,
             gradesLength: grades.length
-          }, null, 2)
-        )
+          }, null, 2)}
+        </pre> */
       )
     )
   }

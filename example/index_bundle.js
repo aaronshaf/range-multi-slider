@@ -59,11 +59,10 @@
 	var ukGrades = __webpack_require__(161);
 	var hkGrades = __webpack_require__(162);
 	
-	var values = ['4', '3', '9'];
+	var values = ['3', '4', '5'];
 	
 	function handleChange(newValues) {
 	  values = newValues;
-	  console.log(newValues);
 	  render();
 	}
 	function render() {
@@ -79,6 +78,16 @@
 	        'US'
 	      ),
 	      React.createElement(GradeRangeInput, { grades: usGrades, values: values, onChange: handleChange })
+	    ),
+	    React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'h2',
+	        null,
+	        'UK'
+	      ),
+	      React.createElement(GradeRangeInput, { grades: ukGrades, values: values, onChange: handleChange })
 	    ),
 	    React.createElement(
 	      'div',
@@ -20680,7 +20689,7 @@
 	  },
 	
 	  componentWillReceiveProps: function componentWillReceiveProps() {
-	    // this.determineBounds()
+	    this.determineBounds();
 	  },
 	
 	  render: function render() {
@@ -20721,11 +20730,15 @@
 	      return React.createElement("div", { key: index, style: { flex: category.flex }, className: "gri-grade-category" }, category.label);
 	    });
 	
-	    return React.createElement("div", { ref: "container", className: "gri-container" }, React.createElement("div", { className: "gri-axis" }), React.createElement("div", { className: "gri-selection-container" }, React.createElement("div", { className: "gri-selection-before", style: { flex: flexBeforeFirstKnob } }), React.createElement("div", { className: "gri-selection", style: { flex: flexBetweenKnobs } }), React.createElement("div", { className: "gri-selection-after", style: { flex: flexAfterSecondKnob } })), React.createElement("div", { className: "gri-grades", ref: "grades" }, gradeComponents), React.createElement("div", { className: "gri-grade-categories" }, gradeCategoryComponents), React.createElement("div", { className: "gri-knobs" }, React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexBeforeFirstKnob } }), React.createElement(Knob, { onMove: this.handleKnobMove }), React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexBetweenKnobs } }), React.createElement(Knob, { onMove: this.handleKnobMove }), React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexAfterSecondKnob } })), React.createElement("pre", { className: "gri-debug" }, JSON.stringify({
-	      lowerBoundIndex: lowerBoundIndex,
-	      upperBoundIndex: upperBoundIndex,
-	      gradesLength: grades.length
-	    }, null, 2)));
+	    return React.createElement("div", { ref: "container", className: "gri-container" }, React.createElement("div", { className: "gri-axis" }), React.createElement("div", { className: "gri-selection-container" }, React.createElement("div", { className: "gri-selection-before", style: { flex: flexBeforeFirstKnob } }), React.createElement("div", { className: "gri-selection", style: { flex: flexBetweenKnobs } }), React.createElement("div", { className: "gri-selection-after", style: { flex: flexAfterSecondKnob } })), React.createElement("div", { className: "gri-grades", ref: "grades" }, gradeComponents), React.createElement("div", { className: "gri-grade-categories" }, gradeCategoryComponents), React.createElement("div", { className: "gri-knobs" }, React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexBeforeFirstKnob } }), React.createElement(Knob, { onMove: this.handleKnobMove }), React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexBetweenKnobs } }), React.createElement(Knob, { onMove: this.handleKnobMove }), React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexAfterSecondKnob } }))
+	    /* <pre className='gri-debug'>
+	      {JSON.stringify({
+	        lowerBoundIndex,
+	        upperBoundIndex,
+	        gradesLength: grades.length
+	      }, null, 2)}
+	    </pre> */
+	    );
 	  }
 	});
 	
@@ -20906,90 +20919,83 @@
 	Object.defineProperty(exports, '__esModule', {
 	  value: true
 	});
-	exports['default'] = [{
+	exports['default'] = [
+	/* {
 	  label: 'Preschool',
 	  abbreviation: 'Pre',
-	  value: 0,
-	  flex: 1
-	}, {
-	  label: 'Kindergarden',
-	  abbreviation: 'K',
-	  value: 1,
-	  flex: 1
-	}, {
-	  label: '1st grade',
+	  value: 'Pre',
+	  flex: 1,
+	}, */
+	{
+	  label: 'Year 1',
 	  abbreviation: '1',
-	  value: 2,
+	  value: 'K',
 	  flex: 1
 	}, {
-	  label: '2nd grade',
+	  label: 'Year 2',
 	  abbreviation: '2',
-	  value: 3,
+	  value: '1',
 	  flex: 1
 	}, {
-	  label: '3rd grade',
+	  label: 'Year 3',
 	  abbreviation: '3',
-	  value: 4,
+	  value: '2',
 	  flex: 1
 	}, {
-	  label: '4th grade',
+	  label: 'Year 4',
 	  abbreviation: '4',
-	  value: 5,
+	  value: '3',
 	  flex: 1
 	}, {
-	  label: '5th grade',
+	  label: 'Year 5',
 	  abbreviation: '5',
-	  value: 6,
+	  value: '4',
 	  flex: 1
 	}, {
-	  label: '6th grade',
+	  label: 'Year 6',
 	  abbreviation: '6',
-	  value: 7,
+	  value: '5',
 	  flex: 1
 	}, {
-	  label: '7th grade',
+	  label: 'Year 7',
 	  abbreviation: '7',
-	  value: 8,
+	  value: '6',
 	  flex: 1
 	}, {
-	  label: '8th grade',
+	  label: 'Year 8',
 	  abbreviation: '8',
-	  value: 9,
+	  value: '7',
 	  flex: 1
 	}, {
-	  label: '9th grade',
+	  label: 'Year 9',
 	  abbreviation: '9',
-	  value: 10,
+	  value: '8',
 	  flex: 1
 	}, {
-	  label: '10th grade',
+	  label: 'Year 10',
 	  abbreviation: '10',
-	  value: 11,
+	  value: '9',
 	  flex: 1
 	}, {
-	  label: '11th grade',
+	  label: 'Year 11',
 	  abbreviation: '11',
-	  value: 12,
+	  value: '10',
 	  flex: 1
 	}, {
-	  label: 'Lower 6',
-	  value: 14,
+	  label: 'Lower 6th',
+	  value: '11',
+	  flex: 1
+	}, {
+	  label: 'Upper 6th',
+	  value: '12',
 	  flex: 2
 	}, {
-	  label: 'Upper 6',
-	  value: 15,
-	  flex: 2
-	}, {
-	  label: 'Lower division',
-	  value: 16,
-	  flex: 2
-	}, {
-	  label: 'Upper division',
-	  value: 17,
+	  label: 'Undergraduate',
+	  value: 'HE',
 	  flex: 2
 	}, {
 	  label: 'Graduate',
-	  value: 18,
+	  value: 'G',
 	  flex: 2
 	}];
 	module.exports = exports['default'];

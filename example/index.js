@@ -4,11 +4,10 @@ var usGrades = require('../data/us')
 var ukGrades = require('../data/uk')
 var hkGrades = require('../data/hk')
 
-var values = ['4','3','9']
+var values = ['3','4','5']
 
 function handleChange (newValues) {
   values = newValues
-  console.log(newValues)
   render()
 }
 function render () {
@@ -17,6 +16,10 @@ function render () {
       <div>
         <h2>US</h2>
         <GradeRangeInput grades={usGrades} values={values} onChange={handleChange} />
+      </div>
+      <div>
+        <h2>UK</h2>
+        <GradeRangeInput grades={ukGrades} values={values} onChange={handleChange} />
       </div>
       <div>
         <h2>HK</h2>
