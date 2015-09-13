@@ -182,11 +182,12 @@ module.exports = React.createClass({
     var grades = this.props.grades
 
     var lowerBoundIndex = grades.reduce(function (lowerBoundIndex, grade, index) {
-      if (values.indexOf(grade.value) > -1 && !lowerBoundIndex) {
+      var gradeIncludedInValues = values.indexOf(grade.value) > -1
+      if (gradeIncludedInValues && lowerBoundIndex === -1) {
         return index
       }
       return lowerBoundIndex
-    }, 0)
+    }, -1)
 
     var upperBoundIndex = grades.reduceRight(function (upperBoundIndex, grade, index) {
       if (values.indexOf(grade.value) > -1 && !upperBoundIndex) {
