@@ -52,6 +52,10 @@ body {
   box-shadow: 1px 1px 1px #999;*/
 }
 
+.gri-knob-focus {
+  border: 1px solid #0098E3;
+}
+
 .gri-knob-dragging {
   /*cursor: default;*/
 }

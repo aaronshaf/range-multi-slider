@@ -20512,7 +20512,9 @@
 	  displayName: 'Knob',
 	
 	  propTypes: {
-	    // onMove: React.PropTypes.function
+	    onMove: React.PropTypes.func,
+	    upperBound: React.PropTypes.bool,
+	    index: React.PropTypes.number
 	  },
 	
 	  getInitialState: function getInitialState() {
@@ -20589,9 +20591,18 @@
 	    this.props.onMoveIndex(this.props.index, Number(event.target.value) + Number(this.props.upperBound || 0));
 	  },
 	
+	  handleSelectFocus: function handleSelectFocus(event) {
+	    this.setState({ focus: true });
+	  },
+	
+	  handleSelectBlur: function handleSelectBlur(event) {
+	    this.setState({ focus: false });
+	  },
+	
 	  render: function render() {
 	    var knobClasses = classnames('gri-knob', {
-	      'gri-knob-dragging': this.state.dragging
+	      'gri-knob-dragging': this.state.dragging,
+	      'gri-knob-focus': this.state.focus
 	    });
 	
 	    var options = this.props.grades.map((function (grade, index) {
@@ -20604,7 +20615,9 @@
 	      ref: "div",
 	      onMouseDown: this.handleMouseDown,
 	      onClick: this.handleClick,
-	      className: knobClasses }, React.createElement("select", {
+	      className: knobClasses,
+	      onFocus: this.handleSelectFocus,
+	      onBlur: this.handleSelectBlur }, React.createElement("select", {
 	      ref: "select",
 	      value: this.props.index - Number(this.props.upperBound || 0),
 	      className: "gri-screenreader-only",
@@ -20764,15 +20777,27 @@
 	
 	  handleMoveIndex: function handleMoveIndex(oldIndex, newIndex) {
 	    if (this.state.lowerBoundIndex === oldIndex && newIndex !== this.state.upperBoundIndex) {
-	      return this.setState({
-	        lowerBoundIndex: newIndex
-	      });
-	    }
-	
-	    if (this.state.upperBoundIndex === oldIndex && newIndex !== this.state.lowerBoundIndex) {
-	      return this.setState({
-	        upperBoundIndex: newIndex
-	      });
+	      if (newIndex > this.state.upperBoundIndex) {
+	        this.setState({
+	          lowerBoundIndex: this.state.upperBoundIndex,
+	          upperBoundIndex: newIndex
+	        }, this.triggerChange);
+	      } else {
+	        this.setState({
+	          lowerBoundIndex: newIndex
+	        }, this.triggerChange);
+	      }
+	    } else if (this.state.upperBoundIndex === oldIndex && newIndex !== this.state.lowerBoundIndex) {
+	      if (newIndex < this.state.lowerBoundIndex) {
+	        this.setState({
+	          lowerBoundIndex: newIndex,
+	          upperBoundIndex: this.state.lowerBoundIndex
+	        }, this.triggerChange);
+	      } else {
+	        this.setState({
+	          upperBoundIndex: newIndex
+	        }, this.triggerChange);
+	      }
 	    }
 	  },
 	
