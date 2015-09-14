@@ -20550,7 +20550,7 @@
 	  handleMouseMove: function handleMouseMove(event) {
 	    pauseEvent(event);
 	    var position = this.getMousePosition(event);
-	    this.props.onMove(position[0], event);
+	    this.props.onMove(this.props.index, position[0], event);
 	  },
 	
 	  getMousePosition: function getMousePosition(event) {
@@ -20569,11 +20569,48 @@
 	    }
 	  },
 	
+	  handleKeyDown: function handleKeyDown(event) {
+	    var isLeftArrow = event.which === 37;
+	    var isRightArrow = event.which === 39;
+	    if (isLeftArrow && this.props.onMoveIndexBackward) {
+	      this.props.onMoveIndexBackward(this.props.index);
+	    }
+	
+	    if (isRightArrow && this.props.onMoveIndexForward) {
+	      this.props.onMoveIndexForward(this.props.index);
+	    }
+	  },
+	
+	  handleClick: function handleClick(event) {
+	    React.findDOMNode(this.refs.select).focus();
+	  },
+	
+	  handleSelectChange: function handleSelectChange(event) {
+	    this.props.onMoveIndex(this.props.index, Number(event.target.value) + Number(this.props.upperBound || 0));
+	  },
+	
 	  render: function render() {
 	    var knobClasses = classnames('gri-knob', {
 	      'gri-knob-dragging': this.state.dragging
 	    });
-	    return React.createElement("div", { onMouseDown: this.handleMouseDown, className: knobClasses });
+	
+	    var options = this.props.grades.map((function (grade, index) {
+	      return React.createElement("option", {
+	        key: grade.value,
+	        value: index }, grade.label || grade.abbreviation);
+	    }).bind(this));
+	
+	    return React.createElement("div", {
+	      ref: "div",
+	      onMouseDown: this.handleMouseDown,
+	      onClick: this.handleClick,
+	      className: knobClasses }, React.createElement("select", {
+	      ref: "select",
+	      value: this.props.index - Number(this.props.upperBound || 0),
+	      className: "gri-screenreader-only",
+	      onKeyDown: this.handleKeyDown,
+	      onChange: this.handleSelectChange,
+	      tabIndex: 0 }, options));
 	  }
 	});
 	
@@ -20595,7 +20632,7 @@
 	    };
 	  },
 	
-	  handleKnobMove: function handleKnobMove(pageX, event) {
+	  handleKnobMove: function handleKnobMove(index, pageX, event) {
 	    var grades = this.props.grades;
 	    var lowerBoundIndex = this.state.lowerBoundIndex;
 	    var upperBoundIndex = this.state.upperBoundIndex;
@@ -20606,16 +20643,18 @@
 	    this.setState({ left: left, right: right, pageX: pageX });
 	
 	    var newIndex;
-	    if (pageX <= left) {
+	    var mouseOrTouchLeftOfComponent = pageX <= left;
+	    var mouseOrTouchRightOfComponent = pageX >= right;
+	
+	    if (mouseOrTouchLeftOfComponent) {
 	      newIndex = 0;
-	    } else if (pageX >= right) {
+	    } else if (mouseOrTouchRightOfComponent) {
 	      newIndex = grades.length;
 	    } else {
-	
 	      var flexTotal = grades.reduce(accumulateFlex, 0);
 	
 	      var gradeNodes = React.findDOMNode(this.refs.grades).childNodes;
-	      var gradeNodesArray = Array.from(gradeNodes);
+	      var gradeNodesArray = Array.from(gradeNodes); // TODO: use polyfill for Array.from
 	      var currentNode = gradeNodesArray.find(function (node) {
 	        var left = React.findDOMNode(node).firstChild.getBoundingClientRect().left;
 	        var right = React.findDOMNode(node).lastChild.getBoundingClientRect().right;
@@ -20693,6 +20732,50 @@
 	    this.determineBounds();
 	  },
 	
+	  handleMoveIndexBackward: function handleMoveIndexBackward(index) {
+	    if (this.state.lowerBoundIndex === index && index > 0) {
+	      return this.setState({
+	        lowerBoundIndex: this.state.lowerBoundIndex - 1
+	      });
+	    }
+	
+	    if (this.state.upperBoundIndex === index && index > 1) {
+	      return this.setState({
+	        lowerBoundIndex: this.state.lowerBoundIndex === this.state.upperBoundIndex - 1 ? this.state.lowerBoundIndex - 1 : this.state.lowerBoundIndex,
+	        upperBoundIndex: this.state.upperBoundIndex - 1
+	      });
+	    }
+	  },
+	
+	  handleMoveIndexForward: function handleMoveIndexForward(index) {
+	    if (this.state.lowerBoundIndex === index) {
+	      return this.setState({
+	        lowerBoundIndex: this.state.lowerBoundIndex + 1,
+	        upperBoundIndex: this.state.upperBoundIndex === this.state.lowerBoundIndex + 1 ? this.state.upperBoundIndex + 1 : this.state.upperBoundIndex
+	      });
+	    }
+	
+	    if (this.state.upperBoundIndex === index && index < this.props.grades.length) {
+	      return this.setState({
+	        upperBoundIndex: this.state.upperBoundIndex + 1
+	      });
+	    }
+	  },
+	
+	  handleMoveIndex: function handleMoveIndex(oldIndex, newIndex) {
+	    if (this.state.lowerBoundIndex === oldIndex && newIndex !== this.state.upperBoundIndex) {
+	      return this.setState({
+	        lowerBoundIndex: newIndex
+	      });
+	    }
+	
+	    if (this.state.upperBoundIndex === oldIndex && newIndex !== this.state.lowerBoundIndex) {
+	      return this.setState({
+	        upperBoundIndex: newIndex
+	      });
+	    }
+	  },
+	
 	  render: function render() {
 	    var grades = this.props.grades;
 	    var lowerBoundIndex = this.state.lowerBoundIndex;
@@ -20731,7 +20814,20 @@
 	      return React.createElement("div", { key: index, style: { flex: category.flex }, className: "gri-grade-category" }, category.label);
 	    });
 	
-	    return React.createElement("div", { ref: "container", className: "gri-container" }, React.createElement("div", { className: "gri-axis" }), React.createElement("div", { className: "gri-selection-container" }, React.createElement("div", { className: "gri-selection-before", style: { flex: flexBeforeFirstKnob } }), React.createElement("div", { className: "gri-selection", style: { flex: flexBetweenKnobs } }), React.createElement("div", { className: "gri-selection-after", style: { flex: flexAfterSecondKnob } })), React.createElement("div", { className: "gri-grades", ref: "grades" }, gradeComponents), React.createElement("div", { className: "gri-grade-categories" }, gradeCategoryComponents), React.createElement("div", { className: "gri-knobs" }, React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexBeforeFirstKnob } }), React.createElement(Knob, { onMove: this.handleKnobMove }), React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexBetweenKnobs } }), React.createElement(Knob, { onMove: this.handleKnobMove }), React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexAfterSecondKnob } }))
+	    return React.createElement("div", { ref: "container", className: "gri-container" }, React.createElement("div", { className: "gri-axis" }), React.createElement("div", { className: "gri-selection-container" }, React.createElement("div", { className: "gri-selection-before", style: { flex: flexBeforeFirstKnob } }), React.createElement("div", { className: "gri-selection", style: { flex: flexBetweenKnobs } }), React.createElement("div", { className: "gri-selection-after", style: { flex: flexAfterSecondKnob } })), React.createElement("div", { className: "gri-grades", ref: "grades" }, gradeComponents), React.createElement("div", { className: "gri-grade-categories" }, gradeCategoryComponents), React.createElement("div", { className: "gri-knobs" }, React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexBeforeFirstKnob } }), React.createElement(Knob, {
+	      grades: this.props.grades,
+	      onMove: this.handleKnobMove,
+	      onMoveIndex: this.handleMoveIndex,
+	      onMoveIndexBackward: this.handleMoveIndexBackward,
+	      onMoveIndexForward: this.handleMoveIndexForward,
+	      index: lowerBoundIndex }), React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexBetweenKnobs } }), React.createElement(Knob, {
+	      grades: this.props.grades,
+	      onMove: this.handleKnobMove,
+	      onMoveIndex: this.handleMoveIndex,
+	      onMoveIndexBackward: this.handleMoveIndexBackward,
+	      onMoveIndexForward: this.handleMoveIndexForward,
+	      index: upperBoundIndex,
+	      upperBound: true }), React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexAfterSecondKnob } }))
 	    /* <pre className='gri-debug'>
 	      {JSON.stringify({
 	        lowerBoundIndex,

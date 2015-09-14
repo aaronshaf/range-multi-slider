@@ -64,7 +64,7 @@ var Knob = React.createClass({
   handleMouseMove: function (event) {
     pauseEvent(event)
     var position = this.getMousePosition(event)
-    this.props.onMove(position[0], event)
+    this.props.onMove(this.props.index, position[0], event)
   },
 
   getMousePosition: function (event) {
@@ -86,11 +86,58 @@ var Knob = React.createClass({
     }
   },
 
+  handleKeyDown: function (event) {
+    var isLeftArrow = event.which === 37
+    var isRightArrow = event.which === 39
+    if (isLeftArrow && this.props.onMoveIndexBackward) {
+      this.props.onMoveIndexBackward(this.props.index)
+    }
+
+    if (isRightArrow && this.props.onMoveIndexForward) {
+      this.props.onMoveIndexForward(this.props.index)
+    }
+  },
+
+  handleClick: function (event) {
+    React.findDOMNode(this.refs.select).focus()
+  },
+
+  handleSelectChange: function (event) {
+    this.props.onMoveIndex(this.props.index, Number(event.target.value) + Number(this.props.upperBound || 0))
+  },
+
   render: function () {
     var knobClasses = classnames('gri-knob', {
       'gri-knob-dragging': this.state.dragging
     })
-    return <div onMouseDown={this.handleMouseDown} className={knobClasses}></div>
+
+    var options = this.props.grades.map(function (grade, index) {
+      return (
+        <option
+            key={grade.value}
+            value={index}>
+          {grade.label || grade.abbreviation}
+        </option>
+      )
+    }.bind(this))
+
+    return (
+      <div
+          ref='div'
+          onMouseDown={this.handleMouseDown}
+          onClick={this.handleClick}
+          className={knobClasses}>
+        <select
+            ref='select'
+            value={this.props.index - Number(this.props.upperBound || 0)}
+            className='gri-screenreader-only'
+            onKeyDown={this.handleKeyDown}
+            onChange={this.handleSelectChange}
+            tabIndex={0}>
+          {options}
+        </select>
+      </div>
+    )
   }
 })
 
@@ -112,7 +159,7 @@ module.exports = React.createClass({
     }
   },
 
-  handleKnobMove: function (pageX, event) {
+  handleKnobMove: function (index, pageX, event) {
     var grades = this.props.grades
     var lowerBoundIndex = this.state.lowerBoundIndex
     var upperBoundIndex = this.state.upperBoundIndex
@@ -123,23 +170,24 @@ module.exports = React.createClass({
     this.setState({left, right, pageX})
 
     var newIndex
-    if (pageX <= left) {
+    var mouseOrTouchLeftOfComponent = pageX <= left
+    var mouseOrTouchRightOfComponent = pageX >= right
+
+    if (mouseOrTouchLeftOfComponent) {
       newIndex = 0
-    } else if (pageX >= right) {
+    } else if (mouseOrTouchRightOfComponent) {
       newIndex = grades.length
     } else {
-
       var flexTotal = grades.reduce(accumulateFlex, 0)
 
       var gradeNodes = React.findDOMNode(this.refs.grades).childNodes
-      var gradeNodesArray = Array.from(gradeNodes)
+      var gradeNodesArray = Array.from(gradeNodes) // TODO: use polyfill for Array.from
       var currentNode = gradeNodesArray.find(function (node) {
         var left = React.findDOMNode(node).firstChild.getBoundingClientRect().left
         var right = React.findDOMNode(node).lastChild.getBoundingClientRect().right
         return pageX >= left && pageX <= right
       })
       var indexOfCurrentNode = gradeNodesArray.indexOf(currentNode)
-
 
       var left = React.findDOMNode(currentNode).firstChild.getBoundingClientRect().left
       var right = React.findDOMNode(currentNode).lastChild.getBoundingClientRect().right
@@ -211,6 +259,50 @@ module.exports = React.createClass({
     this.determineBounds()
   },
 
+  handleMoveIndexBackward: function (index) {
+    if (this.state.lowerBoundIndex === index && index > 0) {
+      return this.setState({
+        lowerBoundIndex: this.state.lowerBoundIndex - 1
+      })
+    }
+
+    if (this.state.upperBoundIndex === index && index > 1) {
+      return this.setState({
+        lowerBoundIndex: this.state.lowerBoundIndex === this.state.upperBoundIndex - 1 ? this.state.lowerBoundIndex - 1 : this.state.lowerBoundIndex,
+        upperBoundIndex: this.state.upperBoundIndex - 1
+      })
+    }
+  },
+
+  handleMoveIndexForward: function (index) {
+    if (this.state.lowerBoundIndex === index) {
+      return this.setState({
+        lowerBoundIndex: this.state.lowerBoundIndex + 1,
+        upperBoundIndex: this.state.upperBoundIndex === this.state.lowerBoundIndex + 1 ? this.state.upperBoundIndex + 1 : this.state.upperBoundIndex
+      })
+    }
+
+    if (this.state.upperBoundIndex === index && index < this.props.grades.length) {
+      return this.setState({
+        upperBoundIndex: this.state.upperBoundIndex + 1
+      })
+    }
+  },
+
+  handleMoveIndex: function (oldIndex, newIndex) {
+    if (this.state.lowerBoundIndex === oldIndex && newIndex !== this.state.upperBoundIndex) {
+      return this.setState({
+        lowerBoundIndex: newIndex
+      })
+    }
+
+    if (this.state.upperBoundIndex === oldIndex && newIndex !== this.state.lowerBoundIndex) {
+      return this.setState({
+        upperBoundIndex: newIndex
+      })
+    }
+  },
+
   render: function () {
     var grades = this.props.grades
     var lowerBoundIndex = this.state.lowerBoundIndex
@@ -276,9 +368,22 @@ module.exports = React.createClass({
         </div>
         <div className='gri-knobs'>
           <div className='gri-knob-spacer' style={{flex: flexBeforeFirstKnob}}></div>
-          <Knob onMove={this.handleKnobMove} />
+          <Knob
+            grades={this.props.grades}
+            onMove={this.handleKnobMove}
+            onMoveIndex={this.handleMoveIndex}
+            onMoveIndexBackward={this.handleMoveIndexBackward}
+            onMoveIndexForward={this.handleMoveIndexForward}
+            index={lowerBoundIndex} />
           <div className='gri-knob-spacer' style={{flex: flexBetweenKnobs}}></div>
-          <Knob onMove={this.handleKnobMove} />
+          <Knob
+            grades={this.props.grades}
+            onMove={this.handleKnobMove}
+            onMoveIndex={this.handleMoveIndex}
+            onMoveIndexBackward={this.handleMoveIndexBackward}
+            onMoveIndexForward={this.handleMoveIndexForward}
+            index={upperBoundIndex}
+            upperBound={true} />
           <div className='gri-knob-spacer' style={{flex: flexAfterSecondKnob}}></div>
         </div>
         {/* <pre className='gri-debug'>
