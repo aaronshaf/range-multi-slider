@@ -5,154 +5,9 @@ Some methods derived from github.com/mpowaga/react-slider (MIT)
 
 var React = require('react')
 var classnames = require('classnames')
-
-var Divisions = React.createClass({
-  displayName: 'Divisions',
-
-  render: function () {
-    return <div className='gri-division'></div>
-  }
-})
-
-function pauseEvent(e) {
-  if (e.stopPropagation) e.stopPropagation()
-  if (e.preventDefault) e.preventDefault()
-  e.cancelBubble = true
-  e.returnValue = false
-  return false
-}
-
-var Knob = React.createClass({
-  displayName: 'Knob',
-
-  propTypes: {
-    onMove: React.PropTypes.func,
-    upperBound: React.PropTypes.bool,
-    index: React.PropTypes.number
-  },
-
-  getInitialState: function () {
-    return {
-      dragging: false
-    }
-  },
-
-  getMouseEventMap: function () {
-    return {
-      'mousemove': this.handleMouseMove,
-      'mouseup': this.handleMouseUp
-    }
-  },
-
-  handleMouseDown: function (event) {
-    this.setState({
-      dragging: true
-    })
-    pauseEvent(event)
-    this.addHandlers(this.getMouseEventMap())
-  },
-
-  handleMouseUp: function () {
-    this.handleDragEnd(this.getMouseEventMap())
-  },
-
-  handleDragEnd: function (eventMap) {
-    this.removeHandlers(eventMap)
-    this.setState({
-      dragging: false
-    })
-  },
-
-  handleMouseMove: function (event) {
-    pauseEvent(event)
-    var position = this.getMousePosition(event)
-    this.props.onMove(this.props.index, position[0], event)
-  },
-
-  getMousePosition: function (event) {
-    return [
-      event['pageX'],
-      event['pageY']
-    ]
-  },
-
-  addHandlers: function (eventMap) {
-    for (var key in eventMap) {
-      document.addEventListener(key, eventMap[key], false)
-    }
-  },
-
-  removeHandlers: function (eventMap) {
-    for (var key in eventMap) {
-      document.removeEventListener(key, eventMap[key], false)
-    }
-  },
-
-  handleKeyDown: function (event) {
-    var isLeftArrow = event.which === 37
-    var isRightArrow = event.which === 39
-    if (isLeftArrow && this.props.onMoveIndexBackward) {
-      this.props.onMoveIndexBackward(this.props.index)
-    }
-
-    if (isRightArrow && this.props.onMoveIndexForward) {
-      this.props.onMoveIndexForward(this.props.index)
-    }
-  },
-
-  handleClick: function (event) {
-    React.findDOMNode(this.refs.select).focus()
-  },
-
-  handleSelectChange: function (event) {
-    this.props.onMoveIndex(this.props.index, Number(event.target.value) + Number(this.props.upperBound || 0))
-  },
-
-  handleSelectFocus: function (event) {
-    this.setState({focus: true})
-  },
-
-  handleSelectBlur: function (event) {
-    this.setState({focus: false})
-  },
-
-  render: function () {
-    var knobClasses = classnames('gri-knob', {
-      'gri-knob-dragging': this.state.dragging,
-      'gri-knob-focus': this.state.focus
-    })
-
-    var options = this.props.grades.map(function (grade, index) {
-      return (
-        <option
-            key={grade.value}
-            value={index}>
-          {grade.label || grade.abbreviation}
-        </option>
-      )
-    }.bind(this))
-
-    return (
-      <div
-          ref='div'
-          onMouseDown={this.handleMouseDown}
-          onClick={this.handleClick}
-          className={knobClasses}
-          onFocus={this.handleSelectFocus}
-          onBlur={this.handleSelectBlur}>
-        <select
-            ref='select'
-            value={this.props.index - Number(this.props.upperBound || 0)}
-            className='gri-screenreader-only'
-            onKeyDown={this.handleKeyDown}
-            onChange={this.handleSelectChange}
-            tabIndex={0}>
-          {options}
-        </select>
-      </div>
-    )
-  }
-})
+var flattenCategories = require('./lib/flatten-categories')
+var accumulateFlex = require('./lib/accumulate-flex')
+var Knob = require('./knob')
 
 module.exports = React.createClass({
   displayName: 'GradeRangeInput',
@@ -164,8 +19,8 @@ module.exports = React.createClass({
 
   getInitialState: function () {
     return {
-      lowerBoundIndex: 5,
-      upperBoundIndex: 8,
+      lowerBoundIndex: 0,
+      upperBoundIndex: 1,
       left: null,
       pageX: null,
       right: null
@@ -215,19 +70,19 @@ module.exports = React.createClass({
     if (newIndex < lowerBoundIndex) {
       this.setState({
         lowerBoundIndex: newIndex
-      }, this.triggerChange)
+      })
     } else if (newIndex > upperBoundIndex) {
       this.setState({
         upperBoundIndex: newIndex
-      }, this.triggerChange)
+      })
     } else if (newIndex > lowerBoundIndex && newIndex <= lowerBoundIndex + (upperBoundIndex - lowerBoundIndex) / 2) {
       this.setState({
         lowerBoundIndex: newIndex
-      }, this.triggerChange)
+      })
     } else if (newIndex < upperBoundIndex && newIndex > lowerBoundIndex + (upperBoundIndex - lowerBoundIndex) / 2) {
       this.setState({
         upperBoundIndex: newIndex
-      }, this.triggerChange)
+      })
     }
   },
 
@@ -236,6 +91,7 @@ module.exports = React.createClass({
     var newValues = newGrades.map(function (grade) {
       return grade.value
     })
+    console.log('triggerChange', newValues)
     this.props.onChange(newValues)
   },
 
@@ -308,26 +164,30 @@ module.exports = React.createClass({
         this.setState({
           lowerBoundIndex: this.state.upperBoundIndex,
           upperBoundIndex: newIndex
-        }) 
+        }, this.triggerChange) 
       } else {
         this.setState({
           lowerBoundIndex: newIndex
-        })        
+        }, this.triggerChange)        
       }
     } else if (this.state.upperBoundIndex === oldIndex && newIndex !== this.state.lowerBoundIndex) {
       if (newIndex < this.state.lowerBoundIndex) {
         this.setState({
           lowerBoundIndex: newIndex,
           upperBoundIndex: this.state.lowerBoundIndex
-        }) 
+        }, this.triggerChange) 
       } else {
         this.setState({
           upperBoundIndex: newIndex
-        })  
+        }, this.triggerChange)  
       }
     }
 
     //this.triggerChange()
+  },
+
+  handleDragEnd: function () {
+    this.triggerChange()
   },
 
   render: function () {
@@ -398,6 +258,7 @@ module.exports = React.createClass({
           <Knob
             grades={this.props.grades}
             onMove={this.handleKnobMove}
+            onDragEnd={this.handleDragEnd}
             onMoveIndex={this.handleMoveIndex}
             onMoveIndexBackward={this.handleMoveIndexBackward}
             onMoveIndexForward={this.handleMoveIndexForward}
@@ -406,6 +267,7 @@ module.exports = React.createClass({
           <Knob
             grades={this.props.grades}
             onMove={this.handleKnobMove}
+            onDragEnd={this.handleDragEnd}
             onMoveIndex={this.handleMoveIndex}
             onMoveIndexBackward={this.handleMoveIndexBackward}
             onMoveIndexForward={this.handleMoveIndexForward}
@@ -424,24 +286,3 @@ module.exports = React.createClass({
     )
   }
 })
-
-function accumulateFlex (flex, grade) {
-  return flex + grade.flex
-}
-
-function flattenCategories (categories, grade) {
-      var flex = grade.flex || 1
-      var lastCategory = categories.length ? categories[categories.length - 1] : null
-      var sameAsLastCategory = lastCategory && grade.category === lastCategory.label
-
-      if (sameAsLastCategory) {
-        // TODO: don't mutate
-        categories[categories.length - 1].flex += flex
-        return categories        
-      }
-
-      return categories.concat([{
-        label: grade.category,
-        flex: flex
-      }])
-    }

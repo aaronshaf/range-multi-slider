@@ -62,10 +62,11 @@
 	var values = ['3', '4', '5'];
 	
 	function handleChange(newValues) {
+	  console.log('handleChange');
 	  values = newValues;
-	  render();
+	  render(values);
 	}
-	function render() {
+	function render(values) {
 	  React.render(React.createElement(
 	    'div',
 	    null,
@@ -102,7 +103,7 @@
 	  ), document.getElementById('app'));
 	}
 	
-	render();
+	render(values);
 
 /***/ },
 /* 2 */
@@ -20491,141 +20492,9 @@
 	
 	var React = __webpack_require__(2);
 	var classnames = __webpack_require__(159);
-	
-	var Divisions = React.createClass({
-	  displayName: 'Divisions',
-	
-	  render: function render() {
-	    return React.createElement("div", { className: "gri-division" });
-	  }
-	});
-	
-	function pauseEvent(e) {
-	  if (e.stopPropagation) e.stopPropagation();
-	  if (e.preventDefault) e.preventDefault();
-	  e.cancelBubble = true;
-	  e.returnValue = false;
-	  return false;
-	}
-	
-	var Knob = React.createClass({
-	  displayName: 'Knob',
-	
-	  propTypes: {
-	    onMove: React.PropTypes.func,
-	    upperBound: React.PropTypes.bool,
-	    index: React.PropTypes.number
-	  },
-	
-	  getInitialState: function getInitialState() {
-	    return {
-	      dragging: false
-	    };
-	  },
-	
-	  getMouseEventMap: function getMouseEventMap() {
-	    return {
-	      'mousemove': this.handleMouseMove,
-	      'mouseup': this.handleMouseUp
-	    };
-	  },
-	
-	  handleMouseDown: function handleMouseDown(event) {
-	    this.setState({
-	      dragging: true
-	    });
-	    pauseEvent(event);
-	    this.addHandlers(this.getMouseEventMap());
-	  },
-	
-	  handleMouseUp: function handleMouseUp() {
-	    this.handleDragEnd(this.getMouseEventMap());
-	  },
-	
-	  handleDragEnd: function handleDragEnd(eventMap) {
-	    this.removeHandlers(eventMap);
-	    this.setState({
-	      dragging: false
-	    });
-	  },
-	
-	  handleMouseMove: function handleMouseMove(event) {
-	    pauseEvent(event);
-	    var position = this.getMousePosition(event);
-	    this.props.onMove(this.props.index, position[0], event);
-	  },
-	
-	  getMousePosition: function getMousePosition(event) {
-	    return [event['pageX'], event['pageY']];
-	  },
-	
-	  addHandlers: function addHandlers(eventMap) {
-	    for (var key in eventMap) {
-	      document.addEventListener(key, eventMap[key], false);
-	    }
-	  },
-	
-	  removeHandlers: function removeHandlers(eventMap) {
-	    for (var key in eventMap) {
-	      document.removeEventListener(key, eventMap[key], false);
-	    }
-	  },
-	
-	  handleKeyDown: function handleKeyDown(event) {
-	    var isLeftArrow = event.which === 37;
-	    var isRightArrow = event.which === 39;
-	    if (isLeftArrow && this.props.onMoveIndexBackward) {
-	      this.props.onMoveIndexBackward(this.props.index);
-	    }
-	
-	    if (isRightArrow && this.props.onMoveIndexForward) {
-	      this.props.onMoveIndexForward(this.props.index);
-	    }
-	  },
-	
-	  handleClick: function handleClick(event) {
-	    React.findDOMNode(this.refs.select).focus();
-	  },
-	
-	  handleSelectChange: function handleSelectChange(event) {
-	    this.props.onMoveIndex(this.props.index, Number(event.target.value) + Number(this.props.upperBound || 0));
-	  },
-	
-	  handleSelectFocus: function handleSelectFocus(event) {
-	    this.setState({ focus: true });
-	  },
-	
-	  handleSelectBlur: function handleSelectBlur(event) {
-	    this.setState({ focus: false });
-	  },
-	
-	  render: function render() {
-	    var knobClasses = classnames('gri-knob', {
-	      'gri-knob-dragging': this.state.dragging,
-	      'gri-knob-focus': this.state.focus
-	    });
-	
-	    var options = this.props.grades.map((function (grade, index) {
-	      return React.createElement("option", {
-	        key: grade.value,
-	        value: index }, grade.label || grade.abbreviation);
-	    }).bind(this));
-	
-	    return React.createElement("div", {
-	      ref: "div",
-	      onMouseDown: this.handleMouseDown,
-	      onClick: this.handleClick,
-	      className: knobClasses,
-	      onFocus: this.handleSelectFocus,
-	      onBlur: this.handleSelectBlur }, React.createElement("select", {
-	      ref: "select",
-	      value: this.props.index - Number(this.props.upperBound || 0),
-	      className: "gri-screenreader-only",
-	      onKeyDown: this.handleKeyDown,
-	      onChange: this.handleSelectChange,
-	      tabIndex: 0 }, options));
-	  }
-	});
+	var flattenCategories = __webpack_require__(163);
+	var accumulateFlex = __webpack_require__(165);
+	var Knob = __webpack_require__(164);
 	
 	module.exports = React.createClass({
 	  displayName: 'GradeRangeInput',
@@ -20637,8 +20506,8 @@
 	
 	  getInitialState: function getInitialState() {
 	    return {
-	      lowerBoundIndex: 5,
-	      upperBoundIndex: 8,
+	      lowerBoundIndex: 0,
+	      upperBoundIndex: 1,
 	      left: null,
 	      pageX: null,
 	      right: null
@@ -20688,19 +20557,19 @@
 	    if (newIndex < lowerBoundIndex) {
 	      this.setState({
 	        lowerBoundIndex: newIndex
-	      }, this.triggerChange);
+	      });
 	    } else if (newIndex > upperBoundIndex) {
 	      this.setState({
 	        upperBoundIndex: newIndex
-	      }, this.triggerChange);
+	      });
 	    } else if (newIndex > lowerBoundIndex && newIndex <= lowerBoundIndex + (upperBoundIndex - lowerBoundIndex) / 2) {
 	      this.setState({
 	        lowerBoundIndex: newIndex
-	      }, this.triggerChange);
+	      });
 	    } else if (newIndex < upperBoundIndex && newIndex > lowerBoundIndex + (upperBoundIndex - lowerBoundIndex) / 2) {
 	      this.setState({
 	        upperBoundIndex: newIndex
-	      }, this.triggerChange);
+	      });
 	    }
 	  },
 	
@@ -20709,6 +20578,7 @@
 	    var newValues = newGrades.map(function (grade) {
 	      return grade.value;
 	    });
+	    console.log('triggerChange', newValues);
 	    this.props.onChange(newValues);
 	  },
 	
@@ -20799,6 +20669,12 @@
 	        }, this.triggerChange);
 	      }
 	    }
+	
+	    //this.triggerChange()
+	  },
+	
+	  handleDragEnd: function handleDragEnd() {
+	    this.triggerChange();
 	  },
 	
 	  render: function render() {
@@ -20842,12 +20718,14 @@
 	    return React.createElement("div", { ref: "container", className: "gri-container" }, React.createElement("div", { className: "gri-axis" }), React.createElement("div", { className: "gri-selection-container" }, React.createElement("div", { className: "gri-selection-before", style: { flex: flexBeforeFirstKnob } }), React.createElement("div", { className: "gri-selection", style: { flex: flexBetweenKnobs } }), React.createElement("div", { className: "gri-selection-after", style: { flex: flexAfterSecondKnob } })), React.createElement("div", { className: "gri-grades", ref: "grades" }, gradeComponents), React.createElement("div", { className: "gri-grade-categories" }, gradeCategoryComponents), React.createElement("div", { className: "gri-knobs" }, React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexBeforeFirstKnob } }), React.createElement(Knob, {
 	      grades: this.props.grades,
 	      onMove: this.handleKnobMove,
+	      onDragEnd: this.handleDragEnd,
 	      onMoveIndex: this.handleMoveIndex,
 	      onMoveIndexBackward: this.handleMoveIndexBackward,
 	      onMoveIndexForward: this.handleMoveIndexForward,
 	      index: lowerBoundIndex }), React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexBetweenKnobs } }), React.createElement(Knob, {
 	      grades: this.props.grades,
 	      onMove: this.handleKnobMove,
+	      onDragEnd: this.handleDragEnd,
 	      onMoveIndex: this.handleMoveIndex,
 	      onMoveIndexBackward: this.handleMoveIndexBackward,
 	      onMoveIndexForward: this.handleMoveIndexForward,
@@ -20863,27 +20741,6 @@
 	    );
 	  }
 	});
-	
-	function accumulateFlex(flex, grade) {
-	  return flex + grade.flex;
-	}
-	
-	function flattenCategories(categories, grade) {
-	  var flex = grade.flex || 1;
-	  var lastCategory = categories.length ? categories[categories.length - 1] : null;
-	  var sameAsLastCategory = lastCategory && grade.category === lastCategory.label;
-	
-	  if (sameAsLastCategory) {
-	    // TODO: don't mutate
-	    categories[categories.length - 1].flex += flex;
-	    return categories;
-	  }
-	
-	  return categories.concat([{
-	    label: grade.category,
-	    flex: flex
-	  }]);
-	}
 
 /***/ },
 /* 159 */
@@ -21239,6 +21096,184 @@
 	  flex: 2
 	}];
 	module.exports = exports['default'];
+
+/***/ },
+/* 163 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = function flattenCategories(categories, grade) {
+	  var flex = grade.flex || 1;
+	  var lastCategory = categories.length ? categories[categories.length - 1] : null;
+	  var sameAsLastCategory = lastCategory && grade.category === lastCategory.label;
+	
+	  if (sameAsLastCategory) {
+	    // TODO: don't mutate
+	    categories[categories.length - 1].flex += flex;
+	    return categories;
+	  }
+	
+	  return categories.concat([{
+	    label: grade.category,
+	    flex: flex
+	  }]);
+	};
+
+/***/ },
+/* 164 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var classnames = __webpack_require__(159);
+	var pauseEvent = __webpack_require__(166);
+	
+	var React = __webpack_require__(2);
+	
+	module.exports = React.createClass({
+	  displayName: 'Knob',
+	
+	  propTypes: {
+	    onMove: React.PropTypes.func,
+	    upperBound: React.PropTypes.bool,
+	    index: React.PropTypes.number
+	  },
+	
+	  getInitialState: function getInitialState() {
+	    return {
+	      dragging: false
+	    };
+	  },
+	
+	  getMouseEventMap: function getMouseEventMap() {
+	    return {
+	      'mousemove': this.handleMouseMove,
+	      'mouseup': this.handleMouseUp
+	    };
+	  },
+	
+	  handleMouseDown: function handleMouseDown(event) {
+	    this.setState({
+	      dragging: true
+	    });
+	    pauseEvent(event);
+	    this.addHandlers(this.getMouseEventMap());
+	  },
+	
+	  handleMouseUp: function handleMouseUp() {
+	    this.handleDragEnd(this.getMouseEventMap());
+	  },
+	
+	  handleDragEnd: function handleDragEnd(eventMap) {
+	    this.removeHandlers(eventMap);
+	    this.setState({
+	      dragging: false
+	    });
+	    this.props.onDragEnd();
+	  },
+	
+	  handleMouseMove: function handleMouseMove(event) {
+	    pauseEvent(event);
+	    var position = this.getMousePosition(event);
+	    this.props.onMove(this.props.index, position[0], event);
+	  },
+	
+	  getMousePosition: function getMousePosition(event) {
+	    return [event['pageX'], event['pageY']];
+	  },
+	
+	  addHandlers: function addHandlers(eventMap) {
+	    for (var key in eventMap) {
+	      document.addEventListener(key, eventMap[key], false);
+	    }
+	  },
+	
+	  removeHandlers: function removeHandlers(eventMap) {
+	    for (var key in eventMap) {
+	      document.removeEventListener(key, eventMap[key], false);
+	    }
+	  },
+	
+	  handleKeyDown: function handleKeyDown(event) {
+	    var isLeftArrow = event.which === 37;
+	    var isRightArrow = event.which === 39;
+	    if (isLeftArrow && this.props.onMoveIndexBackward) {
+	      this.props.onMoveIndexBackward(this.props.index);
+	    }
+	
+	    if (isRightArrow && this.props.onMoveIndexForward) {
+	      this.props.onMoveIndexForward(this.props.index);
+	    }
+	  },
+	
+	  handleClick: function handleClick(event) {
+	    React.findDOMNode(this.refs.select).focus();
+	  },
+	
+	  handleSelectChange: function handleSelectChange(event) {
+	    this.props.onMoveIndex(this.props.index, Number(event.target.value) + Number(this.props.upperBound || 0));
+	  },
+	
+	  handleSelectFocus: function handleSelectFocus(event) {
+	    this.setState({ focus: true });
+	  },
+	
+	  handleSelectBlur: function handleSelectBlur(event) {
+	    this.setState({ focus: false });
+	  },
+	
+	  render: function render() {
+	    var knobClasses = classnames('gri-knob', {
+	      'gri-knob-dragging': this.state.dragging,
+	      'gri-knob-focus': this.state.focus
+	    });
+	
+	    var options = this.props.grades.map((function (grade, index) {
+	      return React.createElement("option", {
+	        key: grade.value,
+	        value: index }, grade.label || grade.abbreviation);
+	    }).bind(this));
+	
+	    return React.createElement("div", {
+	      ref: "div",
+	      onMouseDown: this.handleMouseDown,
+	      onClick: this.handleClick,
+	      className: knobClasses,
+	      onFocus: this.handleSelectFocus,
+	      onBlur: this.handleSelectBlur }, React.createElement("select", {
+	      ref: "select",
+	      value: this.props.index - Number(this.props.upperBound || 0),
+	      className: "gri-screenreader-only",
+	      onKeyDown: this.handleKeyDown,
+	      onChange: this.handleSelectChange,
+	      tabIndex: 0 }, options));
+	  }
+	});
+
+/***/ },
+/* 165 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = function accumulateFlex(flex, grade) {
+	  return flex + grade.flex;
+	};
+
+/***/ },
+/* 166 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = function pauseEvent(e) {
+	  if (e.stopPropagation) e.stopPropagation();
+	  if (e.preventDefault) e.preventDefault();
+	  e.cancelBubble = true;
+	  e.returnValue = false;
+	  return false;
+	};
 
 /***/ }
 /******/ ]);

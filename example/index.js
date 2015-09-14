@@ -7,10 +7,11 @@ var hkGrades = require('../data/hk')
 var values = ['3','4','5']
 
 function handleChange (newValues) {
+  console.log('handleChange')
   values = newValues
-  render()
+  render(values)
 }
-function render () {
+function render (values) {
   React.render(
     <div>
       <div>
@@ -30,4 +31,4 @@ function render () {
   )
 }
 
-render()
+render(values)
