@@ -26,7 +26,7 @@ var Knob = React.createClass({
   displayName: 'Knob',
 
   propTypes: {
-    // onMove: React.PropTypes.function
+    onMove: React.PropTypes.function
   },
 
   getInitialState: function () {
