@@ -83,41 +83,29 @@
 	        grades: usGrades,
 	        values: values,
 	        onChange: handleChange })
-	    ),
-	    React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'h2',
-	        null,
-	        'UK'
-	      ),
-	      React.createElement(GradeRangeInput, {
-	        rangeStartLabel: 'UK grade range start',
-	        rangeEndLabel: 'UK grade range end',
-	        grades: ukGrades,
-	        values: values,
-	        onChange: handleChange })
-	    ),
-	    React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'h2',
-	        null,
-	        'HK'
-	      ),
-	      React.createElement(GradeRangeInput, {
-	        rangeStartLabel: 'HK grade range start',
-	        rangeEndLabel: 'HK grade range end',
-	        grades: hkGrades,
-	        values: values,
-	        onChange: handleChange })
 	    )
 	  ), document.getElementById('app'));
 	}
 	
 	render(['3', '4', '5']);
+	/*<div>
+	<h2>UK</h2>
+	<GradeRangeInput
+	    rangeStartLabel='UK grade range start'
+	    rangeEndLabel='UK grade range end'
+	    grades={ukGrades}
+	    values={values}
+	    onChange={handleChange} />
+	</div>
+	<div>
+	<h2>HK</h2>
+	<GradeRangeInput
+	    rangeStartLabel='HK grade range start'
+	    rangeEndLabel='HK grade range end'
+	    grades={hkGrades}
+	    values={values}
+	    onChange={handleChange} />
+	</div> */
 
 /***/ },
 /* 2 */
@@ -20735,18 +20723,14 @@
 	      onMoveIndexBackward: this.handleMoveIndexBackward,
 	      onMoveIndexForward: this.handleMoveIndexForward,
 	      index: upperBoundIndex,
-	      isUpperBound: true }), React.createElement("div", { className: "gri-knob-spacer", style: flexStyles(flexAfterSecondKnob) }))
-	    /* <pre className='gri-debug'>
-	      {JSON.stringify({
-	        lowerBoundIndex,
-	        upperBoundIndex,
-	        gradesLength: grades.length,
-	        flexBeforeFirstKnob,
-	        flexBetweenKnobs,
-	        flexAfterSecondKnob
-	      }, null, 2)}
-	    </pre> */
-	    );
+	      isUpperBound: true }), React.createElement("div", { className: "gri-knob-spacer", style: flexStyles(flexAfterSecondKnob) })), React.createElement("pre", { className: "gri-debug" }, JSON.stringify({
+	      lowerBoundIndex: lowerBoundIndex,
+	      upperBoundIndex: upperBoundIndex,
+	      gradesLength: grades.length,
+	      flexBeforeFirstKnob: flexBeforeFirstKnob,
+	      flexBetweenKnobs: flexBetweenKnobs,
+	      flexAfterSecondKnob: flexAfterSecondKnob
+	    }, null, 2)));
 	  }
 	});
 	
@@ -21010,7 +20994,7 @@
 	
 	  render: function render() {
 	    var options = this.props.options;
-	    var upperBound = this.props.upperBound;
+	    var isUpperBound = this.props.isUpperBound;
 	
 	    var knobClasses = classnames('gri-knob', {
 	      'gri-knob-dragging': this.state.dragging,
@@ -21020,7 +21004,7 @@
 	    var optionComponents = options.map((function (option, index) {
 	      return React.createElement("option", {
 	        key: option.value,
-	        value: index + Number(upperBound || 0) }, option.label || option.abbreviation);
+	        value: index }, option.label || option.abbreviation);
 	    }).bind(this));
 	
 	    return React.createElement("div", {
@@ -21031,7 +21015,7 @@
 	      style: flexStyles(1) }, React.createElement("select", {
 	      "aria-label": this.props.label,
 	      ref: "select",
-	      value: this.props.index,
+	      value: this.props.index - Number(isUpperBound || 0),
 	      className: "gri-screenreader-only",
 	      onKeyDown: this.handleKeyDown,
 	      onChange: this.handleSelectChange,

@@ -22,7 +22,7 @@ function render (values) {
             values={values}
             onChange={handleChange} />
       </div>
-      <div>
+      { /*<div>
         <h2>UK</h2>
         <GradeRangeInput
             rangeStartLabel='UK grade range start'
@@ -39,7 +39,7 @@ function render (values) {
             grades={hkGrades}
             values={values}
             onChange={handleChange} />
-      </div>
+      </div> */ }
     </div>,
     document.getElementById('app')
   )
