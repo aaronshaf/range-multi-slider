@@ -9,6 +9,7 @@ var accumulateFlex = require('./lib/accumulate-flex')
 var flexStyles = require('./lib/flex-styles')
 var toArray = require('./lib/to-array')
 var Knob = require('./knob')
+var find = require('lodash/collection/find')
 
 module.exports = React.createClass({
   displayName: 'GradeRangeInput',
@@ -56,7 +57,7 @@ module.exports = React.createClass({
 
       var gradeNodes = React.findDOMNode(this.refs.grades).childNodes
       var gradeNodesArray = toArray(gradeNodes)
-      var currentNode = gradeNodesArray.find(function (node) {
+      var currentNode = find(gradeNodesArray, function (node) {
         var left = React.findDOMNode(node).firstChild.getBoundingClientRect().left
         var right = React.findDOMNode(node).lastChild.getBoundingClientRect().right
         return pageX >= left && pageX <= right
@@ -255,7 +256,10 @@ module.exports = React.createClass({
           JSON.stringify({
             lowerBoundIndex,
             upperBoundIndex,
-            gradesLength: grades.length
+            gradesLength: grades.length,
+            flexBeforeFirstKnob,
+            flexBetweenKnobs,
+            flexAfterSecondKnob
           }, null, 2)
         )
       )

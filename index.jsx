@@ -1,4 +1,3 @@
-
 /*
 Some patterns derived from github.com/mpowaga/react-slider (MIT)
 */
@@ -257,7 +256,10 @@ module.exports = React.createClass({
           {JSON.stringify({
             lowerBoundIndex,
             upperBoundIndex,
-            gradesLength: grades.length
+            gradesLength: grades.length,
+            flexBeforeFirstKnob,
+            flexBetweenKnobs,
+            flexAfterSecondKnob
           }, null, 2)}
         </pre>
       </div>

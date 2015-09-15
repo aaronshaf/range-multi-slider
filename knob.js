@@ -1,5 +1,6 @@
 var classnames = require('classnames')
 var pauseEvent = require('./lib/pause-event')
+var flexStyles = require('./lib/flex-styles')
 
 var React = require('react')
 
@@ -28,6 +29,14 @@ module.exports = React.createClass({
     return nextProps.index !== this.props.index ||
         nextState.dragging !== this.state.dragging ||
         nextState.focus !== this.state.focus
+  },
+
+  componentDidUpdate: function (prevProps, prevState) {
+    // Force repaint in Safari
+    // http://martinwolf.org/2014/06/10/force-repaint-of-an-element-with-javascript/
+    React.findDOMNode(this.refs.div).style.display = 'none'
+    React.findDOMNode(this.refs.div).offsetHeight
+    React.findDOMNode(this.refs.div).style.display = ''
   },
 
   getMouseEventMap: function () {
@@ -134,7 +143,8 @@ module.exports = React.createClass({
       React.createElement("div", {
           ref: "div", 
           onMouseDown: this.handleMouseDown, 
-          className: knobClasses}, 
+          className: knobClasses, 
+          style: flexStyles(1)}, 
         React.createElement("select", {
             ref: "select", 
             value: this.props.index - Number(this.props.upperBound || 0), 

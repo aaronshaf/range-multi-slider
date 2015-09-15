@@ -31,15 +31,14 @@ body {
 }
 
 .gri-selection-before {
-  flex: 8;
+  margin-left: 10px;
 }
 
 .gri-selection-after {
-  flex: 4;
+  margin-right: 10px;
 }
 
 .gri-selection {
-  flex: 5;
   background-color: #0098E3;
   height: 7px;
 }
