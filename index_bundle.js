@@ -82,7 +82,7 @@
 	  ), document.getElementById('app'));
 	}
 	
-	render(['3', '4', '5']);
+	render(['K', '1', '2']);
 	/* <div>
 	<h2>UK</h2>
 	<GradeRangeInput grades={ukGrades} values={values} onChange={handleChange} />

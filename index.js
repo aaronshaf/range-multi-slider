@@ -30,4 +30,4 @@ function render (values) {
   )
 }
 
-render(['3','4','5'])
+render(['K','1','2'])
