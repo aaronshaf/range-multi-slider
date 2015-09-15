@@ -1,6 +1,6 @@
 
 /*
-Some methods derived from github.com/mpowaga/react-slider (MIT)
+Some patterns derived from github.com/mpowaga/react-slider (MIT)
 */
 
 var React = require('react')
@@ -91,13 +91,14 @@ module.exports = React.createClass({
     var newValues = newGrades.map(function (grade) {
       return grade.value
     })
-    console.log('triggerChange', newValues)
+    // console.log('triggerChange', newValues)
     this.props.onChange(newValues)
   },
 
-  determineBounds: function () {
-    var values = this.props.values
-    var grades = this.props.grades
+  determineBounds: function (props) {
+    // console.log('determineBounds', props.values)
+    var values = props.values
+    var grades = props.grades
 
     var lowerBoundIndex = grades.reduce(function (lowerBoundIndex, grade, index) {
       var gradeIncludedInValues = values.indexOf(grade.value) > -1
@@ -121,11 +122,13 @@ module.exports = React.createClass({
   },
 
   componentWillMount: function () {
-    this.determineBounds()
+    // console.log('componentWillMount')
+    this.determineBounds(this.props)
   },
 
-  componentWillReceiveProps: function () {
-    this.determineBounds()
+  componentWillReceiveProps: function (nextProps) {
+    // console.log('componentWillReceiveProps')
+    this.determineBounds(nextProps)
   },
 
   handleMoveIndexBackward: function (index) {
@@ -144,7 +147,7 @@ module.exports = React.createClass({
   },
 
   handleMoveIndexForward: function (index) {
-    if (this.state.lowerBoundIndex === index) {
+    if (this.state.lowerBoundIndex === index && this.state.upperBoundIndex !== this.props.grades.length) {
       return this.setState({
         lowerBoundIndex: this.state.lowerBoundIndex + 1,
         upperBoundIndex: this.state.upperBoundIndex === this.state.lowerBoundIndex + 1 ? this.state.upperBoundIndex + 1 : this.state.upperBoundIndex
@@ -275,13 +278,13 @@ module.exports = React.createClass({
             upperBound={true} />
           <div className='gri-knob-spacer' style={{flex: flexAfterSecondKnob}}></div>
         </div>
-        {/* <pre className='gri-debug'>
+        <pre className='gri-debug'>
           {JSON.stringify({
             lowerBoundIndex,
             upperBoundIndex,
             gradesLength: grades.length
           }, null, 2)}
-        </pre> */}
+        </pre>
       </div>
     )
   }

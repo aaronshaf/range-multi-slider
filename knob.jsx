@@ -47,6 +47,7 @@ module.exports = React.createClass({
 
   handleMouseMove: function (event) {
     pauseEvent(event)
+    React.findDOMNode(this.refs.select).focus()
     var position = this.getMousePosition(event)
     this.props.onMove(this.props.index, position[0], event)
   },
@@ -82,10 +83,6 @@ module.exports = React.createClass({
     }
   },
 
-  handleClick: function (event) {
-    React.findDOMNode(this.refs.select).focus()
-  },
-
   handleSelectChange: function (event) {
     this.props.onMoveIndex(this.props.index, Number(event.target.value) + Number(this.props.upperBound || 0))
   },
@@ -118,7 +115,6 @@ module.exports = React.createClass({
       <div
           ref='div'
           onMouseDown={this.handleMouseDown}
-          onClick={this.handleClick}
           className={knobClasses}
           onFocus={this.handleSelectFocus}
           onBlur={this.handleSelectBlur}>
