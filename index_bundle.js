@@ -77,7 +77,12 @@
 	        null,
 	        'US'
 	      ),
-	      React.createElement(GradeRangeInput, { grades: usGrades, values: values, onChange: handleChange })
+	      React.createElement(GradeRangeInput, {
+	        rangeStartLabel: 'US grade range start',
+	        rangeEndLabel: 'US grade range end',
+	        grades: usGrades,
+	        values: values,
+	        onChange: handleChange })
 	    ),
 	    React.createElement(
 	      'div',
@@ -87,7 +92,12 @@
 	        null,
 	        'UK'
 	      ),
-	      React.createElement(GradeRangeInput, { grades: ukGrades, values: values, onChange: handleChange })
+	      React.createElement(GradeRangeInput, {
+	        rangeStartLabel: 'UK grade range start',
+	        rangeEndLabel: 'UK grade range end',
+	        grades: ukGrades,
+	        values: values,
+	        onChange: handleChange })
 	    ),
 	    React.createElement(
 	      'div',
@@ -97,7 +107,12 @@
 	        null,
 	        'HK'
 	      ),
-	      React.createElement(GradeRangeInput, { grades: hkGrades, values: values, onChange: handleChange })
+	      React.createElement(GradeRangeInput, {
+	        rangeStartLabel: 'HK grade range start',
+	        rangeEndLabel: 'HK grade range end',
+	        grades: hkGrades,
+	        values: values,
+	        onChange: handleChange })
 	    )
 	  ), document.getElementById('app'));
 	}
@@ -20703,7 +20718,8 @@
 	    var gradeCategories = grades.reduce(flattenCategories, []);
 	    var gradeCategoryComponents = gradeCategories.map(createGradeCategoryComponent);
 	
-	    return React.createElement("div", { ref: "container", className: "gri-container" }, React.createElement("div", { className: "gri-axis" }), React.createElement("div", { className: "gri-selection-container" }, React.createElement("div", { className: "gri-selection-before", style: flexStyles(flexBeforeFirstKnob) }), React.createElement("div", { className: "gri-selection", style: flexStyles(flexBetweenKnobs) }), React.createElement("div", { className: "gri-selection-after", style: flexStyles(flexAfterSecondKnob) })), React.createElement("div", { className: "gri-grades", ref: "grades" }, gradeComponents), React.createElement("div", { className: "gri-grade-categories" }, gradeCategoryComponents), React.createElement("div", { className: "gri-knobs" }, React.createElement("div", { className: "gri-knob-spacer", style: flexStyles(flexBeforeFirstKnob) }), React.createElement(Knob, {
+	    return React.createElement("div", { ref: "container", className: "gri-container" }, React.createElement("div", { className: "gri-axis" }), React.createElement("div", { className: "gri-selection-container" }, React.createElement("div", { className: "gri-selection-before", style: flexStyles(flexBeforeFirstKnob) }), React.createElement("div", { className: "gri-selection", style: flexStyles(flexBetweenKnobs) }), React.createElement("div", { className: "gri-selection-after", style: flexStyles(flexAfterSecondKnob) })), React.createElement("div", { className: "gri-grades", ref: "grades", "aria-hidden": "true" }, gradeComponents), React.createElement("div", { className: "gri-grade-categories" }, gradeCategoryComponents), React.createElement("div", { className: "gri-knobs" }, React.createElement("div", { className: "gri-knob-spacer", style: flexStyles(flexBeforeFirstKnob) }), React.createElement(Knob, {
+	      label: this.props.rangeStartLabel,
 	      options: this.props.grades,
 	      onPointerMove: this.handlePointerMove,
 	      onDragEnd: this.handleDragEnd,
@@ -20711,6 +20727,7 @@
 	      onMoveIndexBackward: this.handleMoveIndexBackward,
 	      onMoveIndexForward: this.handleMoveIndexForward,
 	      index: lowerBoundIndex }), React.createElement("div", { className: "gri-knob-spacer", style: flexStyles(flexBetweenKnobs) }), React.createElement(Knob, {
+	      label: this.props.rangeEndLabel,
 	      options: this.props.grades,
 	      onPointerMove: this.handlePointerMove,
 	      onDragEnd: this.handleDragEnd,
@@ -21006,10 +21023,12 @@
 	    }).bind(this));
 	
 	    return React.createElement("div", {
+	      title: this.props.label,
 	      ref: "div",
 	      onMouseDown: this.handleMouseDown,
 	      className: knobClasses,
 	      style: flexStyles(1) }, React.createElement("select", {
+	      "aria-label": this.props.label,
 	      ref: "select",
 	      value: this.props.index - Number(this.props.upperBound || 0),
 	      className: "gri-screenreader-only",
