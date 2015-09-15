@@ -17,14 +17,14 @@ function render (values) {
         <h2>US</h2>
         <GradeRangeInput grades={usGrades} values={values} onChange={handleChange} />
       </div>
-      <div>
+      { /* <div>
         <h2>UK</h2>
         <GradeRangeInput grades={ukGrades} values={values} onChange={handleChange} />
       </div>
       <div>
         <h2>HK</h2>
         <GradeRangeInput grades={hkGrades} values={values} onChange={handleChange} />
-      </div>
+      </div> */ }
     </div>,
     document.getElementById('app')
   )
