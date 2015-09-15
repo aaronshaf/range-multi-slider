@@ -20706,14 +20706,18 @@
 	      onMoveIndexBackward: this.handleMoveIndexBackward,
 	      onMoveIndexForward: this.handleMoveIndexForward,
 	      index: upperBoundIndex,
-	      isUpperBound: true }), React.createElement("div", { className: "gri-knob-spacer", style: flexStyles(flexAfterSecondKnob) })), React.createElement("pre", { className: "gri-debug" }, JSON.stringify({
-	      lowerBoundIndex: lowerBoundIndex,
-	      upperBoundIndex: upperBoundIndex,
-	      gradesLength: grades.length,
-	      flexBeforeFirstKnob: flexBeforeFirstKnob,
-	      flexBetweenKnobs: flexBetweenKnobs,
-	      flexAfterSecondKnob: flexAfterSecondKnob
-	    }, null, 2)));
+	      isUpperBound: true }), React.createElement("div", { className: "gri-knob-spacer", style: flexStyles(flexAfterSecondKnob) }))
+	    /* <pre className='gri-debug'>
+	      {JSON.stringify({
+	        lowerBoundIndex,
+	        upperBoundIndex,
+	        gradesLength: grades.length,
+	        flexBeforeFirstKnob,
+	        flexBetweenKnobs,
+	        flexAfterSecondKnob
+	      }, null, 2)}
+	    </pre> */
+	    );
 	  }
 	});
 	
@@ -20890,9 +20894,10 @@
 	  componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
 	    // Force repaint in Safari
 	    // http://martinwolf.org/2014/06/10/force-repaint-of-an-element-with-javascript/
-	    React.findDOMNode(this.refs.div).style.display = 'none';
-	    React.findDOMNode(this.refs.div).offsetHeight;
-	    React.findDOMNode(this.refs.div).style.display = '';
+	    var element = React.findDOMNode(this.refs.div);
+	    element.style.display = 'none';
+	    element.offsetHeight;
+	    element.style.display = '';
 	  },
 	
 	  getMouseEventMap: function getMouseEventMap() {
