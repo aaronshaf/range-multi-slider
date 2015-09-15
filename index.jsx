@@ -7,6 +7,7 @@ var React = require('react')
 var classnames = require('classnames')
 var flattenCategories = require('./lib/flatten-categories')
 var accumulateFlex = require('./lib/accumulate-flex')
+var flexStyles = require('./lib/flex-styles')
 var Knob = require('./knob')
 
 module.exports = React.createClass({
@@ -218,9 +219,9 @@ module.exports = React.createClass({
       <div ref='container' className='gri-container'>
         <div className='gri-axis'></div>
         <div className='gri-selection-container'>
-          <div className='gri-selection-before' style={{flex: flexBeforeFirstKnob}}></div>
-          <div className='gri-selection' style={{flex: flexBetweenKnobs}}></div>
-          <div className='gri-selection-after' style={{flex: flexAfterSecondKnob}}></div>
+          <div className='gri-selection-before' style={flexStyles(flexBeforeFirstKnob)}></div>
+          <div className='gri-selection' style={flexStyles(flexBetweenKnobs)}></div>
+          <div className='gri-selection-after' style={flexStyles(flexAfterSecondKnob)}></div>
         </div>
         <div className='gri-grades' ref='grades'>
           {gradeComponents}
@@ -229,7 +230,7 @@ module.exports = React.createClass({
           {gradeCategoryComponents}
         </div>
         <div className='gri-knobs'>
-          <div className='gri-knob-spacer' style={{flex: flexBeforeFirstKnob}}></div>
+          <div className='gri-knob-spacer' style={flexStyles(flexBeforeFirstKnob)}></div>
           <Knob
             options={this.props.grades}
             onPointerMove={this.handlePointerMove}
@@ -238,7 +239,7 @@ module.exports = React.createClass({
             onMoveIndexBackward={this.handleMoveIndexBackward}
             onMoveIndexForward={this.handleMoveIndexForward}
             index={lowerBoundIndex} />
-          <div className='gri-knob-spacer' style={{flex: flexBetweenKnobs}}></div>
+          <div className='gri-knob-spacer' style={flexStyles(flexBetweenKnobs)}></div>
           <Knob
             options={this.props.grades}
             onPointerMove={this.handlePointerMove}
@@ -248,15 +249,15 @@ module.exports = React.createClass({
             onMoveIndexForward={this.handleMoveIndexForward}
             index={upperBoundIndex}
             isUpperBound={true} />
-          <div className='gri-knob-spacer' style={{flex: flexAfterSecondKnob}}></div>
+          <div className='gri-knob-spacer' style={flexStyles(flexAfterSecondKnob)}></div>
         </div>
-        {/* <pre className='gri-debug'>
+        <pre className='gri-debug'>
           {JSON.stringify({
             lowerBoundIndex,
             upperBoundIndex,
             gradesLength: grades.length
           }, null, 2)}
-        </pre> */}
+        </pre>
       </div>
     )
   }
@@ -264,7 +265,7 @@ module.exports = React.createClass({
 
 function createGradeCategoryComponent (category, index) {
   return (
-    <div key={index} style={{flex: category.flex}} className='gri-grade-category'>
+    <div key={index} style={flexStyles(category.flex)} className='gri-grade-category'>
       {category.label}
     </div>
   )
@@ -273,9 +274,7 @@ function createGradeCategoryComponent (category, index) {
 function createGradeComponent (grade) {
   var label = grade.abbreviation || grade.label
   var flex = grade.flex || 1
-  var styles = {
-    flex: flex
-  }
+  var styles = flexStyles(flex)
 
   var labelClassNames = classnames('gri-grade-label', grade.labelClassName)
 

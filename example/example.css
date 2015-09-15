@@ -18,6 +18,12 @@ body {
 
 .gri-selection-container {
   position: absolute;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -moz-flexbox;
+  display: -ms-flexbox;
+  display: -o-flexbox;
+  display: -webkit-flex;
   display: flex;
   width: 100%;
   top: 7px;
@@ -61,6 +67,12 @@ body {
 }
 
 .gri-grade-categories {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -moz-flexbox;
+  display: -ms-flexbox;
+  display: -o-flexbox;
+  display: -webkit-flex;
   display: flex;
   width: 100%;
   position: absolute;
@@ -80,6 +92,12 @@ body {
 .gri-grades,
 .gri-knobs {
   position: absolute;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -moz-flexbox;
+  display: -ms-flexbox;
+  display: -o-flexbox;
+  display: -webkit-flex;
   display: flex;
   left: 10px;
   right: 10px;

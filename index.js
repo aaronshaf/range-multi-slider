@@ -6,6 +6,7 @@ var React = require('react')
 var classnames = require('classnames')
 var flattenCategories = require('./lib/flatten-categories')
 var accumulateFlex = require('./lib/accumulate-flex')
+var flexStyles = require('./lib/flex-styles')
 var Knob = require('./knob')
 
 module.exports = React.createClass({
@@ -217,9 +218,9 @@ module.exports = React.createClass({
       React.createElement("div", {ref: "container", className: "gri-container"}, 
         React.createElement("div", {className: "gri-axis"}), 
         React.createElement("div", {className: "gri-selection-container"}, 
-          React.createElement("div", {className: "gri-selection-before", style: {flex: flexBeforeFirstKnob}}), 
-          React.createElement("div", {className: "gri-selection", style: {flex: flexBetweenKnobs}}), 
-          React.createElement("div", {className: "gri-selection-after", style: {flex: flexAfterSecondKnob}})
+          React.createElement("div", {className: "gri-selection-before", style: flexStyles(flexBeforeFirstKnob)}), 
+          React.createElement("div", {className: "gri-selection", style: flexStyles(flexBetweenKnobs)}), 
+          React.createElement("div", {className: "gri-selection-after", style: flexStyles(flexAfterSecondKnob)})
         ), 
         React.createElement("div", {className: "gri-grades", ref: "grades"}, 
           gradeComponents
@@ -228,7 +229,7 @@ module.exports = React.createClass({
           gradeCategoryComponents
         ), 
         React.createElement("div", {className: "gri-knobs"}, 
-          React.createElement("div", {className: "gri-knob-spacer", style: {flex: flexBeforeFirstKnob}}), 
+          React.createElement("div", {className: "gri-knob-spacer", style: flexStyles(flexBeforeFirstKnob)}), 
           React.createElement(Knob, {
             options: this.props.grades, 
             onPointerMove: this.handlePointerMove, 
@@ -237,7 +238,7 @@ module.exports = React.createClass({
             onMoveIndexBackward: this.handleMoveIndexBackward, 
             onMoveIndexForward: this.handleMoveIndexForward, 
             index: lowerBoundIndex}), 
-          React.createElement("div", {className: "gri-knob-spacer", style: {flex: flexBetweenKnobs}}), 
+          React.createElement("div", {className: "gri-knob-spacer", style: flexStyles(flexBetweenKnobs)}), 
           React.createElement(Knob, {
             options: this.props.grades, 
             onPointerMove: this.handlePointerMove, 
@@ -247,15 +248,15 @@ module.exports = React.createClass({
             onMoveIndexForward: this.handleMoveIndexForward, 
             index: upperBoundIndex, 
             isUpperBound: true}), 
-          React.createElement("div", {className: "gri-knob-spacer", style: {flex: flexAfterSecondKnob}})
-        )
-        /* <pre className='gri-debug'>
-          {JSON.stringify({
+          React.createElement("div", {className: "gri-knob-spacer", style: flexStyles(flexAfterSecondKnob)})
+        ), 
+        React.createElement("pre", {className: "gri-debug"}, 
+          JSON.stringify({
             lowerBoundIndex,
             upperBoundIndex,
             gradesLength: grades.length
-          }, null, 2)}
-        </pre> */
+          }, null, 2)
+        )
       )
     )
   }
@@ -263,7 +264,7 @@ module.exports = React.createClass({
 
 function createGradeCategoryComponent (category, index) {
   return (
-    React.createElement("div", {key: index, style: {flex: category.flex}, className: "gri-grade-category"}, 
+    React.createElement("div", {key: index, style: flexStyles(category.flex), className: "gri-grade-category"}, 
       category.label
     )
   )
@@ -272,9 +273,7 @@ function createGradeCategoryComponent (category, index) {
 function createGradeComponent (grade) {
   var label = grade.abbreviation || grade.label
   var flex = grade.flex || 1
-  var styles = {
-    flex: flex
-  }
+  var styles = flexStyles(flex)
 
   var labelClassNames = classnames('gri-grade-label', grade.labelClassName)
 

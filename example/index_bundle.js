@@ -55,9 +55,9 @@
 	
 	var React = __webpack_require__(2);
 	var GradeRangeInput = __webpack_require__(158);
-	var usGrades = __webpack_require__(160);
-	var ukGrades = __webpack_require__(161);
-	var hkGrades = __webpack_require__(162);
+	var usGrades = __webpack_require__(198);
+	var ukGrades = __webpack_require__(199);
+	var hkGrades = __webpack_require__(200);
 	var cloneDeep = __webpack_require__(167);
 	
 	function handleChange(newValues) {
@@ -78,31 +78,19 @@
 	        'US'
 	      ),
 	      React.createElement(GradeRangeInput, { grades: usGrades, values: values, onChange: handleChange })
-	    ),
-	    React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'h2',
-	        null,
-	        'UK'
-	      ),
-	      React.createElement(GradeRangeInput, { grades: ukGrades, values: values, onChange: handleChange })
-	    ),
-	    React.createElement(
-	      'div',
-	      null,
-	      React.createElement(
-	        'h2',
-	        null,
-	        'HK'
-	      ),
-	      React.createElement(GradeRangeInput, { grades: hkGrades, values: values, onChange: handleChange })
 	    )
 	  ), document.getElementById('app'));
 	}
 	
 	render(['3', '4', '5']);
+	/* <div>
+	<h2>UK</h2>
+	<GradeRangeInput grades={ukGrades} values={values} onChange={handleChange} />
+	</div>
+	<div>
+	<h2>HK</h2>
+	<GradeRangeInput grades={hkGrades} values={values} onChange={handleChange} />
+	</div> */
 
 /***/ },
 /* 2 */
@@ -20493,6 +20481,7 @@
 	var classnames = __webpack_require__(159);
 	var flattenCategories = __webpack_require__(163);
 	var accumulateFlex = __webpack_require__(165);
+	var flexStyles = __webpack_require__(201);
 	var Knob = __webpack_require__(164);
 	
 	module.exports = React.createClass({
@@ -20700,14 +20689,14 @@
 	    var gradeCategories = grades.reduce(flattenCategories, []);
 	    var gradeCategoryComponents = gradeCategories.map(createGradeCategoryComponent);
 	
-	    return React.createElement("div", { ref: "container", className: "gri-container" }, React.createElement("div", { className: "gri-axis" }), React.createElement("div", { className: "gri-selection-container" }, React.createElement("div", { className: "gri-selection-before", style: { flex: flexBeforeFirstKnob } }), React.createElement("div", { className: "gri-selection", style: { flex: flexBetweenKnobs } }), React.createElement("div", { className: "gri-selection-after", style: { flex: flexAfterSecondKnob } })), React.createElement("div", { className: "gri-grades", ref: "grades" }, gradeComponents), React.createElement("div", { className: "gri-grade-categories" }, gradeCategoryComponents), React.createElement("div", { className: "gri-knobs" }, React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexBeforeFirstKnob } }), React.createElement(Knob, {
+	    return React.createElement("div", { ref: "container", className: "gri-container" }, React.createElement("div", { className: "gri-axis" }), React.createElement("div", { className: "gri-selection-container" }, React.createElement("div", { className: "gri-selection-before", style: flexStyles(flexBeforeFirstKnob) }), React.createElement("div", { className: "gri-selection", style: flexStyles(flexBetweenKnobs) }), React.createElement("div", { className: "gri-selection-after", style: flexStyles(flexAfterSecondKnob) })), React.createElement("div", { className: "gri-grades", ref: "grades" }, gradeComponents), React.createElement("div", { className: "gri-grade-categories" }, gradeCategoryComponents), React.createElement("div", { className: "gri-knobs" }, React.createElement("div", { className: "gri-knob-spacer", style: flexStyles(flexBeforeFirstKnob) }), React.createElement(Knob, {
 	      options: this.props.grades,
 	      onPointerMove: this.handlePointerMove,
 	      onDragEnd: this.handleDragEnd,
 	      onMoveIndex: this.handleMoveIndex,
 	      onMoveIndexBackward: this.handleMoveIndexBackward,
 	      onMoveIndexForward: this.handleMoveIndexForward,
-	      index: lowerBoundIndex }), React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexBetweenKnobs } }), React.createElement(Knob, {
+	      index: lowerBoundIndex }), React.createElement("div", { className: "gri-knob-spacer", style: flexStyles(flexBetweenKnobs) }), React.createElement(Knob, {
 	      options: this.props.grades,
 	      onPointerMove: this.handlePointerMove,
 	      onDragEnd: this.handleDragEnd,
@@ -20715,28 +20704,22 @@
 	      onMoveIndexBackward: this.handleMoveIndexBackward,
 	      onMoveIndexForward: this.handleMoveIndexForward,
 	      index: upperBoundIndex,
-	      isUpperBound: true }), React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexAfterSecondKnob } }))
-	    /* <pre className='gri-debug'>
-	      {JSON.stringify({
-	        lowerBoundIndex,
-	        upperBoundIndex,
-	        gradesLength: grades.length
-	      }, null, 2)}
-	    </pre> */
-	    );
+	      isUpperBound: true }), React.createElement("div", { className: "gri-knob-spacer", style: flexStyles(flexAfterSecondKnob) })), React.createElement("pre", { className: "gri-debug" }, JSON.stringify({
+	      lowerBoundIndex: lowerBoundIndex,
+	      upperBoundIndex: upperBoundIndex,
+	      gradesLength: grades.length
+	    }, null, 2)));
 	  }
 	});
 	
 	function createGradeCategoryComponent(category, index) {
-	  return React.createElement("div", { key: index, style: { flex: category.flex }, className: "gri-grade-category" }, category.label);
+	  return React.createElement("div", { key: index, style: flexStyles(category.flex), className: "gri-grade-category" }, category.label);
 	}
 	
 	function createGradeComponent(grade) {
 	  var label = grade.abbreviation || grade.label;
 	  var flex = grade.flex || 1;
-	  var styles = {
-	    flex: flex
-	  };
+	  var styles = flexStyles(flex);
 	
 	  var labelClassNames = classnames('gri-grade-label', grade.labelClassName);
 	
@@ -20803,306 +20786,9 @@
 
 
 /***/ },
-/* 160 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports['default'] = [
-	/* {
-	  label: 'Preschool',
-	  abbreviation: 'Pre',
-	  value: 'Pre',
-	  flex: 1,
-	}, */
-	{
-	  label: 'Kindergarden',
-	  abbreviation: 'K',
-	  value: 'K',
-	  flex: 1
-	}, {
-	  label: '1st grade',
-	  abbreviation: '1',
-	  value: '1',
-	  flex: 1
-	}, {
-	  label: '2nd grade',
-	  abbreviation: '2',
-	  value: '2',
-	  flex: 1
-	}, {
-	  label: '3rd grade',
-	  abbreviation: '3',
-	  value: '3',
-	  flex: 1
-	}, {
-	  label: '4th grade',
-	  abbreviation: '4',
-	  value: '4',
-	  flex: 1
-	}, {
-	  label: '5th grade',
-	  abbreviation: '5',
-	  value: '5',
-	  flex: 1
-	}, {
-	  label: '6th grade',
-	  abbreviation: '6',
-	  value: '6',
-	  flex: 1
-	}, {
-	  label: '7th grade',
-	  abbreviation: '7',
-	  value: '7',
-	  flex: 1
-	}, {
-	  label: '8th grade',
-	  abbreviation: '8',
-	  value: '8',
-	  flex: 1
-	}, {
-	  label: '9th grade',
-	  abbreviation: '9',
-	  value: '9',
-	  flex: 1
-	}, {
-	  label: '10th grade',
-	  abbreviation: '10',
-	  value: '10',
-	  flex: 1
-	}, {
-	  label: '11th grade',
-	  abbreviation: '11',
-	  value: '11',
-	  flex: 1
-	}, {
-	  label: '12th grade',
-	  abbreviation: '12',
-	  value: '12',
-	  flex: 1
-	}, {
-	  label: 'Undergraduate',
-	  value: 'HE',
-	  flex: 2
-	}, {
-	  label: 'Graduate',
-	  value: 'G',
-	  flex: 2
-	}];
-	module.exports = exports['default'];
-
-/***/ },
-/* 161 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports['default'] = [
-	/* {
-	  label: 'Preschool',
-	  abbreviation: 'Pre',
-	  value: 'Pre',
-	  flex: 1,
-	}, */
-	{
-	  label: 'Year 1',
-	  abbreviation: '1',
-	  value: 'K',
-	  flex: 1
-	}, {
-	  label: 'Year 2',
-	  abbreviation: '2',
-	  value: '1',
-	  flex: 1
-	}, {
-	  label: 'Year 3',
-	  abbreviation: '3',
-	  value: '2',
-	  flex: 1
-	}, {
-	  label: 'Year 4',
-	  abbreviation: '4',
-	  value: '3',
-	  flex: 1
-	}, {
-	  label: 'Year 5',
-	  abbreviation: '5',
-	  value: '4',
-	  flex: 1
-	}, {
-	  label: 'Year 6',
-	  abbreviation: '6',
-	  value: '5',
-	  flex: 1
-	}, {
-	  label: 'Year 7',
-	  abbreviation: '7',
-	  value: '6',
-	  flex: 1
-	}, {
-	  label: 'Year 8',
-	  abbreviation: '8',
-	  value: '7',
-	  flex: 1
-	}, {
-	  label: 'Year 9',
-	  abbreviation: '9',
-	  value: '8',
-	  flex: 1
-	}, {
-	  label: 'Year 10',
-	  abbreviation: '10',
-	  value: '9',
-	  flex: 1
-	}, {
-	  label: 'Year 11',
-	  abbreviation: '11',
-	  value: '10',
-	  flex: 1
-	}, {
-	  label: 'Lower 6th',
-	  value: '11',
-	  flex: 1
-	}, {
-	  label: 'Upper 6th',
-	  value: '12',
-	  flex: 2
-	}, {
-	  label: 'Undergraduate',
-	  value: 'HE',
-	  flex: 2
-	}, {
-	  label: 'Graduate',
-	  value: 'G',
-	  flex: 2
-	}];
-	module.exports = exports['default'];
-
-/***/ },
-/* 162 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports['default'] = [
-	/* {
-	  label: 'Preschool',
-	  abbreviation: 'Pre',
-	  value: 'Pre',
-	  flex: 1,
-	  category: 'Elementary',
-	  labelClassName: 'green-grade-category'
-	}, */
-	{
-	  label: 'Preschool',
-	  abbreviation: 'Pre',
-	  value: 'K',
-	  flex: 1
-	}, {
-	  label: 'Primary 1',
-	  abbreviation: '1',
-	  value: '1',
-	  flex: 1,
-	  category: 'Primary',
-	  labelClassName: 'green-grade-category'
-	}, {
-	  label: 'Primary 2',
-	  abbreviation: '2',
-	  value: '2',
-	  flex: 1,
-	  category: 'Primary',
-	  labelClassName: 'green-grade-category'
-	}, {
-	  label: 'Primary 3',
-	  abbreviation: '3',
-	  value: '3',
-	  flex: 1,
-	  category: 'Primary',
-	  labelClassName: 'green-grade-category'
-	}, {
-	  label: 'Primary 4',
-	  abbreviation: '4',
-	  value: '4',
-	  flex: 1,
-	  category: 'Primary',
-	  labelClassName: 'green-grade-category'
-	}, {
-	  label: 'Primary 5',
-	  abbreviation: '5',
-	  value: '5',
-	  flex: 1,
-	  category: 'Primary',
-	  labelClassName: 'green-grade-category'
-	}, {
-	  label: 'Primary 6',
-	  abbreviation: '6',
-	  value: '6',
-	  flex: 1,
-	  category: 'Primary',
-	  labelClassName: 'green-grade-category'
-	}, {
-	  label: 'Form 1',
-	  abbreviation: '1',
-	  value: '7',
-	  flex: 1,
-	  category: 'Secondary',
-	  labelClassName: 'red-grade-category'
-	}, {
-	  label: 'Form 2',
-	  abbreviation: '2',
-	  value: '8',
-	  flex: 1,
-	  category: 'Secondary',
-	  labelClassName: 'red-grade-category'
-	}, {
-	  label: 'Form 3',
-	  abbreviation: '9',
-	  value: '9',
-	  flex: 1,
-	  category: 'Secondary',
-	  labelClassName: 'red-grade-category'
-	}, {
-	  label: 'Form 4',
-	  abbreviation: '10',
-	  value: '10',
-	  flex: 1,
-	  category: 'Secondary',
-	  labelClassName: 'red-grade-category'
-	}, {
-	  label: 'Form 5',
-	  abbreviation: '11',
-	  value: '11',
-	  flex: 1,
-	  category: 'Secondary',
-	  labelClassName: 'red-grade-category'
-	}, {
-	  label: 'Form 6',
-	  abbreviation: '12',
-	  value: '12',
-	  flex: 1,
-	  category: 'Secondary',
-	  labelClassName: 'red-grade-category'
-	}, {
-	  label: 'Undergraduate',
-	  value: 'HE',
-	  flex: 2
-	}, {
-	  label: 'Graduate',
-	  value: 'G',
-	  flex: 2
-	}];
-	module.exports = exports['default'];
-
-/***/ },
+/* 160 */,
+/* 161 */,
+/* 162 */,
 /* 163 */
 /***/ function(module, exports) {
 
@@ -22459,6 +22145,323 @@
 	
 	module.exports = identity;
 
+
+/***/ },
+/* 198 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports['default'] = [
+	/* {
+	  label: 'Preschool',
+	  abbreviation: 'Pre',
+	  value: 'Pre',
+	  flex: 1,
+	}, */
+	{
+	  label: 'Kindergarden',
+	  abbreviation: 'K',
+	  value: 'K',
+	  flex: 1
+	}, {
+	  label: '1st grade',
+	  abbreviation: '1',
+	  value: '1',
+	  flex: 1
+	}, {
+	  label: '2nd grade',
+	  abbreviation: '2',
+	  value: '2',
+	  flex: 1
+	}, {
+	  label: '3rd grade',
+	  abbreviation: '3',
+	  value: '3',
+	  flex: 1
+	}, {
+	  label: '4th grade',
+	  abbreviation: '4',
+	  value: '4',
+	  flex: 1
+	}, {
+	  label: '5th grade',
+	  abbreviation: '5',
+	  value: '5',
+	  flex: 1
+	}, {
+	  label: '6th grade',
+	  abbreviation: '6',
+	  value: '6',
+	  flex: 1
+	}, {
+	  label: '7th grade',
+	  abbreviation: '7',
+	  value: '7',
+	  flex: 1
+	}, {
+	  label: '8th grade',
+	  abbreviation: '8',
+	  value: '8',
+	  flex: 1
+	}, {
+	  label: '9th grade',
+	  abbreviation: '9',
+	  value: '9',
+	  flex: 1
+	}, {
+	  label: '10th grade',
+	  abbreviation: '10',
+	  value: '10',
+	  flex: 1
+	}, {
+	  label: '11th grade',
+	  abbreviation: '11',
+	  value: '11',
+	  flex: 1
+	}, {
+	  label: '12th grade',
+	  abbreviation: '12',
+	  value: '12',
+	  flex: 1
+	}, {
+	  label: 'Undergraduate',
+	  value: 'HE',
+	  flex: 2
+	}, {
+	  label: 'Graduate',
+	  value: 'G',
+	  flex: 2
+	}];
+	module.exports = exports['default'];
+
+/***/ },
+/* 199 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports['default'] = [
+	/* {
+	  label: 'Preschool',
+	  abbreviation: 'Pre',
+	  value: 'Pre',
+	  flex: 1,
+	}, */
+	{
+	  label: 'Year 1',
+	  abbreviation: '1',
+	  value: 'K',
+	  flex: 1
+	}, {
+	  label: 'Year 2',
+	  abbreviation: '2',
+	  value: '1',
+	  flex: 1
+	}, {
+	  label: 'Year 3',
+	  abbreviation: '3',
+	  value: '2',
+	  flex: 1
+	}, {
+	  label: 'Year 4',
+	  abbreviation: '4',
+	  value: '3',
+	  flex: 1
+	}, {
+	  label: 'Year 5',
+	  abbreviation: '5',
+	  value: '4',
+	  flex: 1
+	}, {
+	  label: 'Year 6',
+	  abbreviation: '6',
+	  value: '5',
+	  flex: 1
+	}, {
+	  label: 'Year 7',
+	  abbreviation: '7',
+	  value: '6',
+	  flex: 1
+	}, {
+	  label: 'Year 8',
+	  abbreviation: '8',
+	  value: '7',
+	  flex: 1
+	}, {
+	  label: 'Year 9',
+	  abbreviation: '9',
+	  value: '8',
+	  flex: 1
+	}, {
+	  label: 'Year 10',
+	  abbreviation: '10',
+	  value: '9',
+	  flex: 1
+	}, {
+	  label: 'Year 11',
+	  abbreviation: '11',
+	  value: '10',
+	  flex: 1
+	}, {
+	  label: 'Lower 6th',
+	  value: '11',
+	  flex: 1
+	}, {
+	  label: 'Upper 6th',
+	  value: '12',
+	  flex: 2
+	}, {
+	  label: 'Undergraduate',
+	  value: 'HE',
+	  flex: 2
+	}, {
+	  label: 'Graduate',
+	  value: 'G',
+	  flex: 2
+	}];
+	module.exports = exports['default'];
+
+/***/ },
+/* 200 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports['default'] = [
+	/* {
+	  label: 'Preschool',
+	  abbreviation: 'Pre',
+	  value: 'Pre',
+	  flex: 1,
+	  category: 'Elementary',
+	  labelClassName: 'green-grade-category'
+	}, */
+	{
+	  label: 'Preschool',
+	  abbreviation: 'Pre',
+	  value: 'K',
+	  flex: 1
+	}, {
+	  label: 'Primary 1',
+	  abbreviation: '1',
+	  value: '1',
+	  flex: 1,
+	  category: 'Primary',
+	  labelClassName: 'green-grade-category'
+	}, {
+	  label: 'Primary 2',
+	  abbreviation: '2',
+	  value: '2',
+	  flex: 1,
+	  category: 'Primary',
+	  labelClassName: 'green-grade-category'
+	}, {
+	  label: 'Primary 3',
+	  abbreviation: '3',
+	  value: '3',
+	  flex: 1,
+	  category: 'Primary',
+	  labelClassName: 'green-grade-category'
+	}, {
+	  label: 'Primary 4',
+	  abbreviation: '4',
+	  value: '4',
+	  flex: 1,
+	  category: 'Primary',
+	  labelClassName: 'green-grade-category'
+	}, {
+	  label: 'Primary 5',
+	  abbreviation: '5',
+	  value: '5',
+	  flex: 1,
+	  category: 'Primary',
+	  labelClassName: 'green-grade-category'
+	}, {
+	  label: 'Primary 6',
+	  abbreviation: '6',
+	  value: '6',
+	  flex: 1,
+	  category: 'Primary',
+	  labelClassName: 'green-grade-category'
+	}, {
+	  label: 'Form 1',
+	  abbreviation: '1',
+	  value: '7',
+	  flex: 1,
+	  category: 'Secondary',
+	  labelClassName: 'red-grade-category'
+	}, {
+	  label: 'Form 2',
+	  abbreviation: '2',
+	  value: '8',
+	  flex: 1,
+	  category: 'Secondary',
+	  labelClassName: 'red-grade-category'
+	}, {
+	  label: 'Form 3',
+	  abbreviation: '9',
+	  value: '9',
+	  flex: 1,
+	  category: 'Secondary',
+	  labelClassName: 'red-grade-category'
+	}, {
+	  label: 'Form 4',
+	  abbreviation: '10',
+	  value: '10',
+	  flex: 1,
+	  category: 'Secondary',
+	  labelClassName: 'red-grade-category'
+	}, {
+	  label: 'Form 5',
+	  abbreviation: '11',
+	  value: '11',
+	  flex: 1,
+	  category: 'Secondary',
+	  labelClassName: 'red-grade-category'
+	}, {
+	  label: 'Form 6',
+	  abbreviation: '12',
+	  value: '12',
+	  flex: 1,
+	  category: 'Secondary',
+	  labelClassName: 'red-grade-category'
+	}, {
+	  label: 'Undergraduate',
+	  value: 'HE',
+	  flex: 2
+	}, {
+	  label: 'Graduate',
+	  value: 'G',
+	  flex: 2
+	}];
+	module.exports = exports['default'];
+
+/***/ },
+/* 201 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	module.exports = function (value) {
+	  return {
+	    'WebkitBoxFlex': value,
+	    'MozBoxFlex': value,
+	    'boxFlex': value,
+	    'msflex': value,
+	    'WebkitFlex': value,
+	    'flex': value
+	  };
+	};
 
 /***/ }
 /******/ ]);
