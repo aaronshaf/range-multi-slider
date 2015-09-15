@@ -127,14 +127,14 @@ module.exports = React.createClass({
     if (lowerBoundIndex === index && index > 0) {
       return this.setState({
         lowerBoundIndex: lowerBoundIndex - 1
-      })
+      }, this.triggerChange)
     }
 
     if (upperBoundIndex === index && index > 1) {
       return this.setState({
         lowerBoundIndex: lowerBoundIndex === upperBoundIndex - 1 ? lowerBoundIndex - 1 : lowerBoundIndex,
         upperBoundIndex: upperBoundIndex - 1
-      })
+      }, this.triggerChange)
     }
   },
 
@@ -147,13 +147,13 @@ module.exports = React.createClass({
       return this.setState({
         lowerBoundIndex: lowerBoundIndex + 1,
         upperBoundIndex: upperBoundIndex === lowerBoundIndex + 1 ? upperBoundIndex + 1 : upperBoundIndex
-      })
+      }, this.triggerChange)
     }
 
     if (upperBoundIndex === index && index < grades.length) {
       return this.setState({
         upperBoundIndex: upperBoundIndex + 1
-      })
+      }, this.triggerChange)
     }
   },
 
@@ -250,13 +250,13 @@ module.exports = React.createClass({
             isUpperBound={true} />
           <div className='gri-knob-spacer' style={{flex: flexAfterSecondKnob}}></div>
         </div>
-        <pre className='gri-debug'>
+        {/* <pre className='gri-debug'>
           {JSON.stringify({
             lowerBoundIndex,
             upperBoundIndex,
             gradesLength: grades.length
           }, null, 2)}
-        </pre>
+        </pre> */}
       </div>
     )
   }
@@ -280,7 +280,11 @@ function createGradeComponent (grade) {
   var labelClassNames = classnames('gri-grade-label', grade.labelClassName)
 
   return (
-    <div key={grade.value + grade.label} className='gri-grade' style={styles}>
+    <div
+        key={grade.value + grade.label}
+        className='gri-grade'
+        style={styles}
+        title={grade.label}>
       <div className='gri-grade-division'></div>
       <div className={labelClassNames}>
         {label}

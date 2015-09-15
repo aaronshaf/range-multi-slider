@@ -126,14 +126,14 @@ module.exports = React.createClass({
     if (lowerBoundIndex === index && index > 0) {
       return this.setState({
         lowerBoundIndex: lowerBoundIndex - 1
-      })
+      }, this.triggerChange)
     }
 
     if (upperBoundIndex === index && index > 1) {
       return this.setState({
         lowerBoundIndex: lowerBoundIndex === upperBoundIndex - 1 ? lowerBoundIndex - 1 : lowerBoundIndex,
         upperBoundIndex: upperBoundIndex - 1
-      })
+      }, this.triggerChange)
     }
   },
 
@@ -146,13 +146,13 @@ module.exports = React.createClass({
       return this.setState({
         lowerBoundIndex: lowerBoundIndex + 1,
         upperBoundIndex: upperBoundIndex === lowerBoundIndex + 1 ? upperBoundIndex + 1 : upperBoundIndex
-      })
+      }, this.triggerChange)
     }
 
     if (upperBoundIndex === index && index < grades.length) {
       return this.setState({
         upperBoundIndex: upperBoundIndex + 1
-      })
+      }, this.triggerChange)
     }
   },
 
@@ -248,14 +248,14 @@ module.exports = React.createClass({
             index: upperBoundIndex, 
             isUpperBound: true}), 
           React.createElement("div", {className: "gri-knob-spacer", style: {flex: flexAfterSecondKnob}})
-        ), 
-        React.createElement("pre", {className: "gri-debug"}, 
-          JSON.stringify({
+        )
+        /* <pre className='gri-debug'>
+          {JSON.stringify({
             lowerBoundIndex,
             upperBoundIndex,
             gradesLength: grades.length
-          }, null, 2)
-        )
+          }, null, 2)}
+        </pre> */
       )
     )
   }
@@ -279,7 +279,11 @@ function createGradeComponent (grade) {
   var labelClassNames = classnames('gri-grade-label', grade.labelClassName)
 
   return (
-    React.createElement("div", {key: grade.value + grade.label, className: "gri-grade", style: styles}, 
+    React.createElement("div", {
+        key: grade.value + grade.label, 
+        className: "gri-grade", 
+        style: styles, 
+        title: grade.label}, 
       React.createElement("div", {className: "gri-grade-division"}), 
       React.createElement("div", {className: labelClassNames}, 
         label

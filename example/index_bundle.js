@@ -78,19 +78,31 @@
 	        'US'
 	      ),
 	      React.createElement(GradeRangeInput, { grades: usGrades, values: values, onChange: handleChange })
+	    ),
+	    React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'h2',
+	        null,
+	        'UK'
+	      ),
+	      React.createElement(GradeRangeInput, { grades: ukGrades, values: values, onChange: handleChange })
+	    ),
+	    React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'h2',
+	        null,
+	        'HK'
+	      ),
+	      React.createElement(GradeRangeInput, { grades: hkGrades, values: values, onChange: handleChange })
 	    )
 	  ), document.getElementById('app'));
 	}
 	
 	render(['3', '4', '5']);
-	/* <div>
-	 <h2>UK</h2>
-	 <GradeRangeInput grades={ukGrades} values={values} onChange={handleChange} />
-	</div>
-	<div>
-	 <h2>HK</h2>
-	 <GradeRangeInput grades={hkGrades} values={values} onChange={handleChange} />
-	</div> */
 
 /***/ },
 /* 2 */
@@ -20601,14 +20613,14 @@
 	    if (lowerBoundIndex === index && index > 0) {
 	      return this.setState({
 	        lowerBoundIndex: lowerBoundIndex - 1
-	      });
+	      }, this.triggerChange);
 	    }
 	
 	    if (upperBoundIndex === index && index > 1) {
 	      return this.setState({
 	        lowerBoundIndex: lowerBoundIndex === upperBoundIndex - 1 ? lowerBoundIndex - 1 : lowerBoundIndex,
 	        upperBoundIndex: upperBoundIndex - 1
-	      });
+	      }, this.triggerChange);
 	    }
 	  },
 	
@@ -20621,13 +20633,13 @@
 	      return this.setState({
 	        lowerBoundIndex: lowerBoundIndex + 1,
 	        upperBoundIndex: upperBoundIndex === lowerBoundIndex + 1 ? upperBoundIndex + 1 : upperBoundIndex
-	      });
+	      }, this.triggerChange);
 	    }
 	
 	    if (upperBoundIndex === index && index < grades.length) {
 	      return this.setState({
 	        upperBoundIndex: upperBoundIndex + 1
-	      });
+	      }, this.triggerChange);
 	    }
 	  },
 	
@@ -20703,11 +20715,15 @@
 	      onMoveIndexBackward: this.handleMoveIndexBackward,
 	      onMoveIndexForward: this.handleMoveIndexForward,
 	      index: upperBoundIndex,
-	      isUpperBound: true }), React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexAfterSecondKnob } })), React.createElement("pre", { className: "gri-debug" }, JSON.stringify({
-	      lowerBoundIndex: lowerBoundIndex,
-	      upperBoundIndex: upperBoundIndex,
-	      gradesLength: grades.length
-	    }, null, 2)));
+	      isUpperBound: true }), React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexAfterSecondKnob } }))
+	    /* <pre className='gri-debug'>
+	      {JSON.stringify({
+	        lowerBoundIndex,
+	        upperBoundIndex,
+	        gradesLength: grades.length
+	      }, null, 2)}
+	    </pre> */
+	    );
 	  }
 	});
 	
@@ -20724,7 +20740,11 @@
 	
 	  var labelClassNames = classnames('gri-grade-label', grade.labelClassName);
 	
-	  return React.createElement("div", { key: grade.value + grade.label, className: "gri-grade", style: styles }, React.createElement("div", { className: "gri-grade-division" }), React.createElement("div", { className: labelClassNames }, label));
+	  return React.createElement("div", {
+	    key: grade.value + grade.label,
+	    className: "gri-grade",
+	    style: styles,
+	    title: grade.label }, React.createElement("div", { className: "gri-grade-division" }), React.createElement("div", { className: labelClassNames }, label));
 	}
 
 /***/ },
