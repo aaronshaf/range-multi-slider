@@ -83,29 +83,41 @@
 	        grades: usGrades,
 	        values: values,
 	        onChange: handleChange })
+	    ),
+	    React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'h2',
+	        null,
+	        'UK'
+	      ),
+	      React.createElement(GradeRangeInput, {
+	        rangeStartLabel: 'UK grade range start',
+	        rangeEndLabel: 'UK grade range end',
+	        grades: ukGrades,
+	        values: values,
+	        onChange: handleChange })
+	    ),
+	    React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'h2',
+	        null,
+	        'HK'
+	      ),
+	      React.createElement(GradeRangeInput, {
+	        rangeStartLabel: 'HK grade range start',
+	        rangeEndLabel: 'HK grade range end',
+	        grades: hkGrades,
+	        values: values,
+	        onChange: handleChange })
 	    )
 	  ), document.getElementById('app'));
 	}
 	
 	render(['3', '4', '5']);
-	/*<div>
-	<h2>UK</h2>
-	<GradeRangeInput
-	    rangeStartLabel='UK grade range start'
-	    rangeEndLabel='UK grade range end'
-	    grades={ukGrades}
-	    values={values}
-	    onChange={handleChange} />
-	</div>
-	<div>
-	<h2>HK</h2>
-	<GradeRangeInput
-	    rangeStartLabel='HK grade range start'
-	    rangeEndLabel='HK grade range end'
-	    grades={hkGrades}
-	    values={values}
-	    onChange={handleChange} />
-	</div> */
 
 /***/ },
 /* 2 */
@@ -20714,7 +20726,10 @@
 	      onMoveIndex: this.handleMoveIndex,
 	      onMoveIndexBackward: this.handleMoveIndexBackward,
 	      onMoveIndexForward: this.handleMoveIndexForward,
-	      index: lowerBoundIndex }), React.createElement("div", { className: "gri-knob-spacer", style: flexStyles(flexBetweenKnobs) }), React.createElement(Knob, {
+	      index: lowerBoundIndex,
+	      lowerBoundIndex: lowerBoundIndex,
+	      upperBoundIndex: upperBoundIndex,
+	      isUpperBound: false }), React.createElement("div", { className: "gri-knob-spacer", style: flexStyles(flexBetweenKnobs) }), React.createElement(Knob, {
 	      label: this.props.rangeEndLabel,
 	      options: this.props.grades,
 	      onPointerMove: this.handlePointerMove,
@@ -20723,14 +20738,20 @@
 	      onMoveIndexBackward: this.handleMoveIndexBackward,
 	      onMoveIndexForward: this.handleMoveIndexForward,
 	      index: upperBoundIndex,
-	      isUpperBound: true }), React.createElement("div", { className: "gri-knob-spacer", style: flexStyles(flexAfterSecondKnob) })), React.createElement("pre", { className: "gri-debug" }, JSON.stringify({
 	      lowerBoundIndex: lowerBoundIndex,
 	      upperBoundIndex: upperBoundIndex,
-	      gradesLength: grades.length,
-	      flexBeforeFirstKnob: flexBeforeFirstKnob,
-	      flexBetweenKnobs: flexBetweenKnobs,
-	      flexAfterSecondKnob: flexAfterSecondKnob
-	    }, null, 2)));
+	      isUpperBound: true }), React.createElement("div", { className: "gri-knob-spacer", style: flexStyles(flexAfterSecondKnob) }))
+	    /* <pre className='gri-debug'>
+	      {JSON.stringify({
+	        lowerBoundIndex,
+	        upperBoundIndex,
+	        gradesLength: grades.length,
+	        flexBeforeFirstKnob,
+	        flexBetweenKnobs,
+	        flexAfterSecondKnob
+	      }, null, 2)}
+	    </pre> */
+	    );
 	  }
 	});
 	
@@ -20995,6 +21016,8 @@
 	  render: function render() {
 	    var options = this.props.options;
 	    var isUpperBound = this.props.isUpperBound;
+	    var lowerBoundIndex = this.props.lowerBoundIndex;
+	    var upperBoundIndex = this.props.upperBoundIndex;
 	
 	    var knobClasses = classnames('gri-knob', {
 	      'gri-knob-dragging': this.state.dragging,
@@ -21002,9 +21025,11 @@
 	    });
 	
 	    var optionComponents = options.map((function (option, index) {
+	      var disabled = !(isUpperBound ? index > lowerBoundIndex && index < options.length : index >= 0 && index < upperBoundIndex);
 	      return React.createElement("option", {
 	        key: option.value,
-	        value: index }, option.label || option.abbreviation);
+	        value: index,
+	        disabled: disabled }, option.label || option.abbreviation);
 	    }).bind(this));
 	
 	    return React.createElement("div", {
