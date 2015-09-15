@@ -27,23 +27,28 @@ module.exports = React.createClass({
     }
   },
 
-  handleKnobMove: function (index, pageX, event) {
+  // shouldComponentUpdate: function (nextProps, nextState) {
+  //   return nextProps.values !== this.props.values // assumes immutability
+  // },
+
+  handlePointerMove: function (index, pageX, event) {
     var grades = this.props.grades
     var lowerBoundIndex = this.state.lowerBoundIndex
     var upperBoundIndex = this.state.upperBoundIndex
-
+    var isLowerKnob = lowerBoundIndex === index
+    var isUpperKnob = upperBoundIndex === index
     var left = React.findDOMNode(this.refs.grades).firstChild.getBoundingClientRect().left
     var right = React.findDOMNode(this.refs.grades).lastChild.getBoundingClientRect().right
+    var pointerLeftOfComponent = pageX <= left
+    var pointerRightOfComponent = pageX >= right
 
-    this.setState({left, right, pageX})
+    this.setState({left, right, pageX}) // for debug?
 
     var newIndex
-    var mouseOrTouchLeftOfComponent = pageX <= left
-    var mouseOrTouchRightOfComponent = pageX >= right
 
-    if (mouseOrTouchLeftOfComponent) {
+    if (pointerLeftOfComponent) {
       newIndex = 0
-    } else if (mouseOrTouchRightOfComponent) {
+    } else if (pointerRightOfComponent) {
       newIndex = grades.length
     } else {
       var flexTotal = grades.reduce(accumulateFlex, 0)
@@ -67,36 +72,22 @@ module.exports = React.createClass({
       }
     }
 
-    if (newIndex < lowerBoundIndex) {
-      this.setState({
-        lowerBoundIndex: newIndex
-      })
-    } else if (newIndex > upperBoundIndex) {
-      this.setState({
-        upperBoundIndex: newIndex
-      })
-    } else if (newIndex > lowerBoundIndex && newIndex <= lowerBoundIndex + (upperBoundIndex - lowerBoundIndex) / 2) {
-      this.setState({
-        lowerBoundIndex: newIndex
-      })
-    } else if (newIndex < upperBoundIndex && newIndex > lowerBoundIndex + (upperBoundIndex - lowerBoundIndex) / 2) {
-      this.setState({
-        upperBoundIndex: newIndex
-      })
-    }
+    this.handleMoveIndex(index, newIndex)
   },
 
   triggerChange: function () {
-    var newGrades = this.props.grades.slice(this.state.lowerBoundIndex, this.state.upperBoundIndex)
+    var lowerBoundIndex = this.state.lowerBoundIndex
+    var upperBoundIndex = this.state.upperBoundIndex
+    var grades = this.props.grades
+
+    var newGrades = grades.slice(lowerBoundIndex, upperBoundIndex)
     var newValues = newGrades.map(function (grade) {
       return grade.value
     })
-    // console.log('triggerChange', newValues)
     this.props.onChange(newValues)
   },
 
   determineBounds: function (props) {
-    // console.log('determineBounds', props.values)
     var values = props.values
     var grades = props.grades
 
@@ -122,50 +113,58 @@ module.exports = React.createClass({
   },
 
   componentWillMount: function () {
-    // console.log('componentWillMount')
     this.determineBounds(this.props)
   },
 
   componentWillReceiveProps: function (nextProps) {
-    // console.log('componentWillReceiveProps')
     this.determineBounds(nextProps)
   },
 
   handleMoveIndexBackward: function (index) {
-    if (this.state.lowerBoundIndex === index && index > 0) {
+    var lowerBoundIndex = this.state.lowerBoundIndex
+    var upperBoundIndex = this.state.upperBoundIndex
+
+    if (lowerBoundIndex === index && index > 0) {
       return this.setState({
-        lowerBoundIndex: this.state.lowerBoundIndex - 1
+        lowerBoundIndex: lowerBoundIndex - 1
       })
     }
 
-    if (this.state.upperBoundIndex === index && index > 1) {
+    if (upperBoundIndex === index && index > 1) {
       return this.setState({
-        lowerBoundIndex: this.state.lowerBoundIndex === this.state.upperBoundIndex - 1 ? this.state.lowerBoundIndex - 1 : this.state.lowerBoundIndex,
-        upperBoundIndex: this.state.upperBoundIndex - 1
+        lowerBoundIndex: lowerBoundIndex === upperBoundIndex - 1 ? lowerBoundIndex - 1 : lowerBoundIndex,
+        upperBoundIndex: upperBoundIndex - 1
       })
     }
   },
 
   handleMoveIndexForward: function (index) {
-    if (this.state.lowerBoundIndex === index && this.state.upperBoundIndex !== this.props.grades.length) {
+    var lowerBoundIndex = this.state.lowerBoundIndex
+    var upperBoundIndex = this.state.upperBoundIndex
+    var grades = this.props.grades
+
+    if (lowerBoundIndex === index && upperBoundIndex !== grades.length) {
       return this.setState({
-        lowerBoundIndex: this.state.lowerBoundIndex + 1,
-        upperBoundIndex: this.state.upperBoundIndex === this.state.lowerBoundIndex + 1 ? this.state.upperBoundIndex + 1 : this.state.upperBoundIndex
+        lowerBoundIndex: lowerBoundIndex + 1,
+        upperBoundIndex: upperBoundIndex === lowerBoundIndex + 1 ? upperBoundIndex + 1 : upperBoundIndex
       })
     }
 
-    if (this.state.upperBoundIndex === index && index < this.props.grades.length) {
+    if (upperBoundIndex === index && index < grades.length) {
       return this.setState({
-        upperBoundIndex: this.state.upperBoundIndex + 1
+        upperBoundIndex: upperBoundIndex + 1
       })
     }
   },
 
   handleMoveIndex: function (oldIndex, newIndex) {
-    if (this.state.lowerBoundIndex === oldIndex && newIndex !== this.state.upperBoundIndex) {
-      if (newIndex > this.state.upperBoundIndex) {
+    var lowerBoundIndex = this.state.lowerBoundIndex
+    var upperBoundIndex = this.state.upperBoundIndex
+
+    if (lowerBoundIndex === oldIndex && newIndex !== upperBoundIndex) {
+      if (newIndex > upperBoundIndex) {
         this.setState({
-          lowerBoundIndex: this.state.upperBoundIndex,
+          lowerBoundIndex: upperBoundIndex,
           upperBoundIndex: newIndex
         }, this.triggerChange) 
       } else {
@@ -173,11 +172,11 @@ module.exports = React.createClass({
           lowerBoundIndex: newIndex
         }, this.triggerChange)        
       }
-    } else if (this.state.upperBoundIndex === oldIndex && newIndex !== this.state.lowerBoundIndex) {
-      if (newIndex < this.state.lowerBoundIndex) {
+    } else if (upperBoundIndex === oldIndex && newIndex !== lowerBoundIndex) {
+      if (newIndex < lowerBoundIndex) {
         this.setState({
           lowerBoundIndex: newIndex,
-          upperBoundIndex: this.state.lowerBoundIndex
+          upperBoundIndex: lowerBoundIndex
         }, this.triggerChange) 
       } else {
         this.setState({
@@ -185,8 +184,6 @@ module.exports = React.createClass({
         }, this.triggerChange)  
       }
     }
-
-    //this.triggerChange()
   },
 
   handleDragEnd: function () {
@@ -213,34 +210,9 @@ module.exports = React.createClass({
     //   gradesLength: grades.length
     // })
     
-    var gradeComponents = grades.map(function (grade) {
-      var label = grade.abbreviation || grade.label
-      var flex = grade.flex || 1
-      var styles = {
-        flex: flex
-      }
-
-      var labelClassNames = classnames('gri-grade-label', grade.labelClassName)
-
-      return (
-        <div key={grade.value + grade.label} className='gri-grade' style={styles}>
-          <div className='gri-grade-division'></div>
-          <div className={labelClassNames}>
-            {label}
-          </div>
-        </div>
-      )      
-    })
-
+    var gradeComponents = grades.map(createGradeComponent)
     var gradeCategories = grades.reduce(flattenCategories, [])
-
-    var gradeCategoryComponents = gradeCategories.map(function (category, index) {
-      return (
-        <div key={index} style={{flex: category.flex}} className='gri-grade-category'>
-          {category.label}
-        </div>
-      )
-    })
+    var gradeCategoryComponents = gradeCategories.map(createGradeCategoryComponent)
 
     return (
       <div ref='container' className='gri-container'>
@@ -259,8 +231,8 @@ module.exports = React.createClass({
         <div className='gri-knobs'>
           <div className='gri-knob-spacer' style={{flex: flexBeforeFirstKnob}}></div>
           <Knob
-            grades={this.props.grades}
-            onMove={this.handleKnobMove}
+            options={this.props.grades}
+            onPointerMove={this.handlePointerMove}
             onDragEnd={this.handleDragEnd}
             onMoveIndex={this.handleMoveIndex}
             onMoveIndexBackward={this.handleMoveIndexBackward}
@@ -268,14 +240,14 @@ module.exports = React.createClass({
             index={lowerBoundIndex} />
           <div className='gri-knob-spacer' style={{flex: flexBetweenKnobs}}></div>
           <Knob
-            grades={this.props.grades}
-            onMove={this.handleKnobMove}
+            options={this.props.grades}
+            onPointerMove={this.handlePointerMove}
             onDragEnd={this.handleDragEnd}
             onMoveIndex={this.handleMoveIndex}
             onMoveIndexBackward={this.handleMoveIndexBackward}
             onMoveIndexForward={this.handleMoveIndexForward}
             index={upperBoundIndex}
-            upperBound={true} />
+            isUpperBound={true} />
           <div className='gri-knob-spacer' style={{flex: flexAfterSecondKnob}}></div>
         </div>
         <pre className='gri-debug'>
@@ -289,3 +261,30 @@ module.exports = React.createClass({
     )
   }
 })
+
+function createGradeCategoryComponent (category, index) {
+  return (
+    <div key={index} style={{flex: category.flex}} className='gri-grade-category'>
+      {category.label}
+    </div>
+  )
+}
+
+function createGradeComponent (grade) {
+  var label = grade.abbreviation || grade.label
+  var flex = grade.flex || 1
+  var styles = {
+    flex: flex
+  }
+
+  var labelClassNames = classnames('gri-grade-label', grade.labelClassName)
+
+  return (
+    <div key={grade.value + grade.label} className='gri-grade' style={styles}>
+      <div className='gri-grade-division'></div>
+      <div className={labelClassNames}>
+        {label}
+      </div>
+    </div>
+  )      
+}

@@ -20472,7 +20472,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
-	Some methods derived from github.com/mpowaga/react-slider (MIT)
+	Some patterns derived from github.com/mpowaga/react-slider (MIT)
 	*/
 	
 	'use strict';
@@ -20501,23 +20501,28 @@
 	    };
 	  },
 	
-	  handleKnobMove: function handleKnobMove(index, pageX, event) {
+	  // shouldComponentUpdate: function (nextProps, nextState) {
+	  //   return nextProps.values !== this.props.values // assumes immutability
+	  // },
+	
+	  handlePointerMove: function handlePointerMove(index, pageX, event) {
 	    var grades = this.props.grades;
 	    var lowerBoundIndex = this.state.lowerBoundIndex;
 	    var upperBoundIndex = this.state.upperBoundIndex;
-	
+	    var isLowerKnob = lowerBoundIndex === index;
+	    var isUpperKnob = upperBoundIndex === index;
 	    var left = React.findDOMNode(this.refs.grades).firstChild.getBoundingClientRect().left;
 	    var right = React.findDOMNode(this.refs.grades).lastChild.getBoundingClientRect().right;
+	    var pointerLeftOfComponent = pageX <= left;
+	    var pointerRightOfComponent = pageX >= right;
 	
-	    this.setState({ left: left, right: right, pageX: pageX });
+	    this.setState({ left: left, right: right, pageX: pageX }); // for debug?
 	
 	    var newIndex;
-	    var mouseOrTouchLeftOfComponent = pageX <= left;
-	    var mouseOrTouchRightOfComponent = pageX >= right;
 	
-	    if (mouseOrTouchLeftOfComponent) {
+	    if (pointerLeftOfComponent) {
 	      newIndex = 0;
-	    } else if (mouseOrTouchRightOfComponent) {
+	    } else if (pointerRightOfComponent) {
 	      newIndex = grades.length;
 	    } else {
 	      var flexTotal = grades.reduce(accumulateFlex, 0);
@@ -20541,36 +20546,22 @@
 	      }
 	    }
 	
-	    if (newIndex < lowerBoundIndex) {
-	      this.setState({
-	        lowerBoundIndex: newIndex
-	      });
-	    } else if (newIndex > upperBoundIndex) {
-	      this.setState({
-	        upperBoundIndex: newIndex
-	      });
-	    } else if (newIndex > lowerBoundIndex && newIndex <= lowerBoundIndex + (upperBoundIndex - lowerBoundIndex) / 2) {
-	      this.setState({
-	        lowerBoundIndex: newIndex
-	      });
-	    } else if (newIndex < upperBoundIndex && newIndex > lowerBoundIndex + (upperBoundIndex - lowerBoundIndex) / 2) {
-	      this.setState({
-	        upperBoundIndex: newIndex
-	      });
-	    }
+	    this.handleMoveIndex(index, newIndex);
 	  },
 	
 	  triggerChange: function triggerChange() {
-	    var newGrades = this.props.grades.slice(this.state.lowerBoundIndex, this.state.upperBoundIndex);
+	    var lowerBoundIndex = this.state.lowerBoundIndex;
+	    var upperBoundIndex = this.state.upperBoundIndex;
+	    var grades = this.props.grades;
+	
+	    var newGrades = grades.slice(lowerBoundIndex, upperBoundIndex);
 	    var newValues = newGrades.map(function (grade) {
 	      return grade.value;
 	    });
-	    // console.log('triggerChange', newValues)
 	    this.props.onChange(newValues);
 	  },
 	
 	  determineBounds: function determineBounds(props) {
-	    // console.log('determineBounds', props.values)
 	    var values = props.values;
 	    var grades = props.grades;
 	
@@ -20596,50 +20587,58 @@
 	  },
 	
 	  componentWillMount: function componentWillMount() {
-	    // console.log('componentWillMount')
 	    this.determineBounds(this.props);
 	  },
 	
 	  componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
-	    // console.log('componentWillReceiveProps')
 	    this.determineBounds(nextProps);
 	  },
 	
 	  handleMoveIndexBackward: function handleMoveIndexBackward(index) {
-	    if (this.state.lowerBoundIndex === index && index > 0) {
+	    var lowerBoundIndex = this.state.lowerBoundIndex;
+	    var upperBoundIndex = this.state.upperBoundIndex;
+	
+	    if (lowerBoundIndex === index && index > 0) {
 	      return this.setState({
-	        lowerBoundIndex: this.state.lowerBoundIndex - 1
+	        lowerBoundIndex: lowerBoundIndex - 1
 	      });
 	    }
 	
-	    if (this.state.upperBoundIndex === index && index > 1) {
+	    if (upperBoundIndex === index && index > 1) {
 	      return this.setState({
-	        lowerBoundIndex: this.state.lowerBoundIndex === this.state.upperBoundIndex - 1 ? this.state.lowerBoundIndex - 1 : this.state.lowerBoundIndex,
-	        upperBoundIndex: this.state.upperBoundIndex - 1
+	        lowerBoundIndex: lowerBoundIndex === upperBoundIndex - 1 ? lowerBoundIndex - 1 : lowerBoundIndex,
+	        upperBoundIndex: upperBoundIndex - 1
 	      });
 	    }
 	  },
 	
 	  handleMoveIndexForward: function handleMoveIndexForward(index) {
-	    if (this.state.lowerBoundIndex === index && this.state.upperBoundIndex !== this.props.grades.length) {
+	    var lowerBoundIndex = this.state.lowerBoundIndex;
+	    var upperBoundIndex = this.state.upperBoundIndex;
+	    var grades = this.props.grades;
+	
+	    if (lowerBoundIndex === index && upperBoundIndex !== grades.length) {
 	      return this.setState({
-	        lowerBoundIndex: this.state.lowerBoundIndex + 1,
-	        upperBoundIndex: this.state.upperBoundIndex === this.state.lowerBoundIndex + 1 ? this.state.upperBoundIndex + 1 : this.state.upperBoundIndex
+	        lowerBoundIndex: lowerBoundIndex + 1,
+	        upperBoundIndex: upperBoundIndex === lowerBoundIndex + 1 ? upperBoundIndex + 1 : upperBoundIndex
 	      });
 	    }
 	
-	    if (this.state.upperBoundIndex === index && index < this.props.grades.length) {
+	    if (upperBoundIndex === index && index < grades.length) {
 	      return this.setState({
-	        upperBoundIndex: this.state.upperBoundIndex + 1
+	        upperBoundIndex: upperBoundIndex + 1
 	      });
 	    }
 	  },
 	
 	  handleMoveIndex: function handleMoveIndex(oldIndex, newIndex) {
-	    if (this.state.lowerBoundIndex === oldIndex && newIndex !== this.state.upperBoundIndex) {
-	      if (newIndex > this.state.upperBoundIndex) {
+	    var lowerBoundIndex = this.state.lowerBoundIndex;
+	    var upperBoundIndex = this.state.upperBoundIndex;
+	
+	    if (lowerBoundIndex === oldIndex && newIndex !== upperBoundIndex) {
+	      if (newIndex > upperBoundIndex) {
 	        this.setState({
-	          lowerBoundIndex: this.state.upperBoundIndex,
+	          lowerBoundIndex: upperBoundIndex,
 	          upperBoundIndex: newIndex
 	        }, this.triggerChange);
 	      } else {
@@ -20647,11 +20646,11 @@
 	          lowerBoundIndex: newIndex
 	        }, this.triggerChange);
 	      }
-	    } else if (this.state.upperBoundIndex === oldIndex && newIndex !== this.state.lowerBoundIndex) {
-	      if (newIndex < this.state.lowerBoundIndex) {
+	    } else if (upperBoundIndex === oldIndex && newIndex !== lowerBoundIndex) {
+	      if (newIndex < lowerBoundIndex) {
 	        this.setState({
 	          lowerBoundIndex: newIndex,
-	          upperBoundIndex: this.state.lowerBoundIndex
+	          upperBoundIndex: lowerBoundIndex
 	        }, this.triggerChange);
 	      } else {
 	        this.setState({
@@ -20659,8 +20658,6 @@
 	        }, this.triggerChange);
 	      }
 	    }
-	
-	    //this.triggerChange()
 	  },
 	
 	  handleDragEnd: function handleDragEnd() {
@@ -20687,46 +20684,48 @@
 	    //   gradesLength: grades.length
 	    // })
 	
-	    var gradeComponents = grades.map(function (grade) {
-	      var label = grade.abbreviation || grade.label;
-	      var flex = grade.flex || 1;
-	      var styles = {
-	        flex: flex
-	      };
-	
-	      var labelClassNames = classnames('gri-grade-label', grade.labelClassName);
-	
-	      return React.createElement("div", { key: grade.value + grade.label, className: "gri-grade", style: styles }, React.createElement("div", { className: "gri-grade-division" }), React.createElement("div", { className: labelClassNames }, label));
-	    });
-	
+	    var gradeComponents = grades.map(createGradeComponent);
 	    var gradeCategories = grades.reduce(flattenCategories, []);
-	
-	    var gradeCategoryComponents = gradeCategories.map(function (category, index) {
-	      return React.createElement("div", { key: index, style: { flex: category.flex }, className: "gri-grade-category" }, category.label);
-	    });
+	    var gradeCategoryComponents = gradeCategories.map(createGradeCategoryComponent);
 	
 	    return React.createElement("div", { ref: "container", className: "gri-container" }, React.createElement("div", { className: "gri-axis" }), React.createElement("div", { className: "gri-selection-container" }, React.createElement("div", { className: "gri-selection-before", style: { flex: flexBeforeFirstKnob } }), React.createElement("div", { className: "gri-selection", style: { flex: flexBetweenKnobs } }), React.createElement("div", { className: "gri-selection-after", style: { flex: flexAfterSecondKnob } })), React.createElement("div", { className: "gri-grades", ref: "grades" }, gradeComponents), React.createElement("div", { className: "gri-grade-categories" }, gradeCategoryComponents), React.createElement("div", { className: "gri-knobs" }, React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexBeforeFirstKnob } }), React.createElement(Knob, {
-	      grades: this.props.grades,
-	      onMove: this.handleKnobMove,
+	      options: this.props.grades,
+	      onPointerMove: this.handlePointerMove,
 	      onDragEnd: this.handleDragEnd,
 	      onMoveIndex: this.handleMoveIndex,
 	      onMoveIndexBackward: this.handleMoveIndexBackward,
 	      onMoveIndexForward: this.handleMoveIndexForward,
 	      index: lowerBoundIndex }), React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexBetweenKnobs } }), React.createElement(Knob, {
-	      grades: this.props.grades,
-	      onMove: this.handleKnobMove,
+	      options: this.props.grades,
+	      onPointerMove: this.handlePointerMove,
 	      onDragEnd: this.handleDragEnd,
 	      onMoveIndex: this.handleMoveIndex,
 	      onMoveIndexBackward: this.handleMoveIndexBackward,
 	      onMoveIndexForward: this.handleMoveIndexForward,
 	      index: upperBoundIndex,
-	      upperBound: true }), React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexAfterSecondKnob } })), React.createElement("pre", { className: "gri-debug" }, JSON.stringify({
+	      isUpperBound: true }), React.createElement("div", { className: "gri-knob-spacer", style: { flex: flexAfterSecondKnob } })), React.createElement("pre", { className: "gri-debug" }, JSON.stringify({
 	      lowerBoundIndex: lowerBoundIndex,
 	      upperBoundIndex: upperBoundIndex,
 	      gradesLength: grades.length
 	    }, null, 2)));
 	  }
 	});
+	
+	function createGradeCategoryComponent(category, index) {
+	  return React.createElement("div", { key: index, style: { flex: category.flex }, className: "gri-grade-category" }, category.label);
+	}
+	
+	function createGradeComponent(grade) {
+	  var label = grade.abbreviation || grade.label;
+	  var flex = grade.flex || 1;
+	  var styles = {
+	    flex: flex
+	  };
+	
+	  var labelClassNames = classnames('gri-grade-label', grade.labelClassName);
+	
+	  return React.createElement("div", { key: grade.value + grade.label, className: "gri-grade", style: styles }, React.createElement("div", { className: "gri-grade-division" }), React.createElement("div", { className: labelClassNames }, label));
+	}
 
 /***/ },
 /* 159 */
@@ -21121,15 +21120,25 @@
 	  displayName: 'Knob',
 	
 	  propTypes: {
+	    options: React.PropTypes.array,
 	    onMove: React.PropTypes.func,
-	    upperBound: React.PropTypes.bool,
-	    index: React.PropTypes.number
+	    onDragEnd: React.PropTypes.func,
+	    onMoveIndex: React.PropTypes.func,
+	    onMoveIndexBackward: React.PropTypes.func,
+	    onMoveIndexForward: React.PropTypes.func,
+	    index: React.PropTypes.number,
+	    isUpperBound: React.PropTypes.bool
 	  },
 	
 	  getInitialState: function getInitialState() {
 	    return {
-	      dragging: false
+	      dragging: false,
+	      focus: false
 	    };
+	  },
+	
+	  shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
+	    return nextProps.index !== this.props.index;
 	  },
 	
 	  getMouseEventMap: function getMouseEventMap() {
@@ -21141,10 +21150,12 @@
 	
 	  handleMouseDown: function handleMouseDown(event) {
 	    this.setState({
-	      dragging: true
+	      dragging: true,
+	      focus: true
 	    });
 	    pauseEvent(event);
 	    this.addHandlers(this.getMouseEventMap());
+	    React.findDOMNode(this.refs.select).focus();
 	  },
 	
 	  handleMouseUp: function handleMouseUp() {
@@ -21161,9 +21172,8 @@
 	
 	  handleMouseMove: function handleMouseMove(event) {
 	    pauseEvent(event);
-	    React.findDOMNode(this.refs.select).focus();
 	    var position = this.getMousePosition(event);
-	    this.props.onMove(this.props.index, position[0], event);
+	    this.props.onPointerMove(this.props.index, position[0], event);
 	  },
 	
 	  getMousePosition: function getMousePosition(event) {
@@ -21183,19 +21193,23 @@
 	  },
 	
 	  handleKeyDown: function handleKeyDown(event) {
+	    var index = this.props.index;
 	    var isLeftArrow = event.which === 37;
 	    var isRightArrow = event.which === 39;
+	
 	    if (isLeftArrow && this.props.onMoveIndexBackward) {
-	      this.props.onMoveIndexBackward(this.props.index);
+	      this.props.onMoveIndexBackward(index);
 	    }
 	
 	    if (isRightArrow && this.props.onMoveIndexForward) {
-	      this.props.onMoveIndexForward(this.props.index);
+	      this.props.onMoveIndexForward(index);
 	    }
 	  },
 	
 	  handleSelectChange: function handleSelectChange(event) {
-	    this.props.onMoveIndex(this.props.index, Number(event.target.value) + Number(this.props.upperBound || 0));
+	    var isUpperBound = this.props.isUpperBound;
+	    var index = this.props.index;
+	    this.props.onMoveIndex(index, Number(event.target.value) + Number(isUpperBound || 0));
 	  },
 	
 	  handleSelectFocus: function handleSelectFocus(event) {
@@ -21207,15 +21221,17 @@
 	  },
 	
 	  render: function render() {
+	    var options = this.props.options;
+	
 	    var knobClasses = classnames('gri-knob', {
 	      'gri-knob-dragging': this.state.dragging,
 	      'gri-knob-focus': this.state.focus
 	    });
 	
-	    var options = this.props.grades.map((function (grade, index) {
+	    var optionComponents = options.map((function (option, index) {
 	      return React.createElement("option", {
-	        key: grade.value,
-	        value: index }, grade.label || grade.abbreviation);
+	        key: option.value,
+	        value: index }, option.label || option.abbreviation);
 	    }).bind(this));
 	
 	    return React.createElement("div", {
@@ -21229,7 +21245,7 @@
 	      className: "gri-screenreader-only",
 	      onKeyDown: this.handleKeyDown,
 	      onChange: this.handleSelectChange,
-	      tabIndex: 0 }, options));
+	      tabIndex: 0 }, optionComponents));
 	  }
 	});
 

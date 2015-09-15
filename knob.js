@@ -7,15 +7,25 @@ module.exports = React.createClass({
   displayName: 'Knob',
 
   propTypes: {
+    options: React.PropTypes.array,
     onMove: React.PropTypes.func,
-    upperBound: React.PropTypes.bool,
-    index: React.PropTypes.number
+    onDragEnd: React.PropTypes.func,
+    onMoveIndex: React.PropTypes.func,
+    onMoveIndexBackward: React.PropTypes.func,
+    onMoveIndexForward: React.PropTypes.func,
+    index: React.PropTypes.number,
+    isUpperBound: React.PropTypes.bool
   },
 
   getInitialState: function () {
     return {
-      dragging: false
+      dragging: false,
+      focus: false
     }
+  },
+
+  shouldComponentUpdate: function (nextProps, nextState) {
+    return nextProps.index !== this.props.index
   },
 
   getMouseEventMap: function () {
@@ -27,10 +37,12 @@ module.exports = React.createClass({
 
   handleMouseDown: function (event) {
     this.setState({
-      dragging: true
+      dragging: true,
+      focus: true
     })
     pauseEvent(event)
     this.addHandlers(this.getMouseEventMap())
+    React.findDOMNode(this.refs.select).focus()
   },
 
   handleMouseUp: function () {
@@ -47,9 +59,8 @@ module.exports = React.createClass({
 
   handleMouseMove: function (event) {
     pauseEvent(event)
-    React.findDOMNode(this.refs.select).focus()
     var position = this.getMousePosition(event)
-    this.props.onMove(this.props.index, position[0], event)
+    this.props.onPointerMove(this.props.index, position[0], event)
   },
 
   getMousePosition: function (event) {
@@ -72,19 +83,23 @@ module.exports = React.createClass({
   },
 
   handleKeyDown: function (event) {
+    var index = this.props.index
     var isLeftArrow = event.which === 37
     var isRightArrow = event.which === 39
+
     if (isLeftArrow && this.props.onMoveIndexBackward) {
-      this.props.onMoveIndexBackward(this.props.index)
+      this.props.onMoveIndexBackward(index)
     }
 
     if (isRightArrow && this.props.onMoveIndexForward) {
-      this.props.onMoveIndexForward(this.props.index)
+      this.props.onMoveIndexForward(index)
     }
   },
 
   handleSelectChange: function (event) {
-    this.props.onMoveIndex(this.props.index, Number(event.target.value) + Number(this.props.upperBound || 0))
+    var isUpperBound = this.props.isUpperBound
+    var index = this.props.index
+    this.props.onMoveIndex(index, Number(event.target.value) + Number(isUpperBound || 0))
   },
 
   handleSelectFocus: function (event) {
@@ -96,17 +111,19 @@ module.exports = React.createClass({
   },
 
   render: function () {
+    var options = this.props.options
+
     var knobClasses = classnames('gri-knob', {
       'gri-knob-dragging': this.state.dragging,
       'gri-knob-focus': this.state.focus
     })
 
-    var options = this.props.grades.map(function (grade, index) {
+    var optionComponents = options.map(function (option, index) {
       return (
         React.createElement("option", {
-            key: grade.value, 
+            key: option.value, 
             value: index}, 
-          grade.label || grade.abbreviation
+          option.label || option.abbreviation
         )
       )
     }.bind(this))
@@ -125,7 +142,7 @@ module.exports = React.createClass({
             onKeyDown: this.handleKeyDown, 
             onChange: this.handleSelectChange, 
             tabIndex: 0}, 
-          options
+          optionComponents
         )
       )
     )
