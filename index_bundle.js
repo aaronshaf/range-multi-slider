@@ -78,19 +78,31 @@
 	        'US'
 	      ),
 	      React.createElement(GradeRangeInput, { grades: usGrades, values: values, onChange: handleChange })
+	    ),
+	    React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'h2',
+	        null,
+	        'UK'
+	      ),
+	      React.createElement(GradeRangeInput, { grades: ukGrades, values: values, onChange: handleChange })
+	    ),
+	    React.createElement(
+	      'div',
+	      null,
+	      React.createElement(
+	        'h2',
+	        null,
+	        'HK'
+	      ),
+	      React.createElement(GradeRangeInput, { grades: hkGrades, values: values, onChange: handleChange })
 	    )
 	  ), document.getElementById('app'));
 	}
 	
-	render(['K', '1', '2']);
-	/* <div>
-	<h2>UK</h2>
-	<GradeRangeInput grades={ukGrades} values={values} onChange={handleChange} />
-	</div>
-	<div>
-	<h2>HK</h2>
-	<GradeRangeInput grades={hkGrades} values={values} onChange={handleChange} />
-	</div> */
+	render(['3', '4', '5']);
 
 /***/ },
 /* 2 */
