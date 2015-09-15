@@ -55,10 +55,10 @@
 	
 	var React = __webpack_require__(2);
 	var GradeRangeInput = __webpack_require__(158);
-	var usGrades = __webpack_require__(198);
-	var ukGrades = __webpack_require__(199);
-	var hkGrades = __webpack_require__(200);
-	var cloneDeep = __webpack_require__(167);
+	var usGrades = __webpack_require__(166);
+	var ukGrades = __webpack_require__(167);
+	var hkGrades = __webpack_require__(168);
+	var cloneDeep = __webpack_require__(169);
 	
 	function handleChange(newValues) {
 	  // console.log('handleChange')
@@ -20479,10 +20479,10 @@
 	
 	var React = __webpack_require__(2);
 	var classnames = __webpack_require__(159);
-	var flattenCategories = __webpack_require__(163);
-	var accumulateFlex = __webpack_require__(165);
-	var flexStyles = __webpack_require__(201);
-	var toArray = __webpack_require__(202);
+	var flattenCategories = __webpack_require__(160);
+	var accumulateFlex = __webpack_require__(161);
+	var flexStyles = __webpack_require__(162);
+	var toArray = __webpack_require__(163);
 	var Knob = __webpack_require__(164);
 	
 	module.exports = React.createClass({
@@ -20787,10 +20787,7 @@
 
 
 /***/ },
-/* 160 */,
-/* 161 */,
-/* 162 */,
-/* 163 */
+/* 160 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -20813,13 +20810,50 @@
 	};
 
 /***/ },
+/* 161 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = function accumulateFlex(flex, grade) {
+	  return flex + grade.flex;
+	};
+
+/***/ },
+/* 162 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	module.exports = function (value) {
+	  return {
+	    'WebkitBoxFlex': value,
+	    'MozBoxFlex': value,
+	    'boxFlex': value,
+	    'msflex': value,
+	    'WebkitFlex': value,
+	    'flex': value
+	  };
+	};
+
+/***/ },
+/* 163 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = function (nodeList) {
+	  return [].slice.call(nodeList);
+	};
+
+/***/ },
 /* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var classnames = __webpack_require__(159);
-	var pauseEvent = __webpack_require__(166);
+	var pauseEvent = __webpack_require__(165);
 	
 	var React = __webpack_require__(2);
 	
@@ -20962,16 +20996,6 @@
 
 	"use strict";
 	
-	module.exports = function accumulateFlex(flex, grade) {
-	  return flex + grade.flex;
-	};
-
-/***/ },
-/* 166 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
 	module.exports = function pauseEvent(e) {
 	  if (e.stopPropagation) e.stopPropagation();
 	  if (e.preventDefault) e.preventDefault();
@@ -20981,11 +21005,311 @@
 	};
 
 /***/ },
+/* 166 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports['default'] = [
+	/* {
+	  label: 'Preschool',
+	  abbreviation: 'Pre',
+	  value: 'Pre',
+	  flex: 1,
+	}, */
+	{
+	  label: 'Kindergarden',
+	  abbreviation: 'K',
+	  value: 'K',
+	  flex: 1
+	}, {
+	  label: '1st grade',
+	  abbreviation: '1',
+	  value: '1',
+	  flex: 1
+	}, {
+	  label: '2nd grade',
+	  abbreviation: '2',
+	  value: '2',
+	  flex: 1
+	}, {
+	  label: '3rd grade',
+	  abbreviation: '3',
+	  value: '3',
+	  flex: 1
+	}, {
+	  label: '4th grade',
+	  abbreviation: '4',
+	  value: '4',
+	  flex: 1
+	}, {
+	  label: '5th grade',
+	  abbreviation: '5',
+	  value: '5',
+	  flex: 1
+	}, {
+	  label: '6th grade',
+	  abbreviation: '6',
+	  value: '6',
+	  flex: 1
+	}, {
+	  label: '7th grade',
+	  abbreviation: '7',
+	  value: '7',
+	  flex: 1
+	}, {
+	  label: '8th grade',
+	  abbreviation: '8',
+	  value: '8',
+	  flex: 1
+	}, {
+	  label: '9th grade',
+	  abbreviation: '9',
+	  value: '9',
+	  flex: 1
+	}, {
+	  label: '10th grade',
+	  abbreviation: '10',
+	  value: '10',
+	  flex: 1
+	}, {
+	  label: '11th grade',
+	  abbreviation: '11',
+	  value: '11',
+	  flex: 1
+	}, {
+	  label: '12th grade',
+	  abbreviation: '12',
+	  value: '12',
+	  flex: 1
+	}, {
+	  label: 'Undergraduate',
+	  value: 'HE',
+	  flex: 2
+	}, {
+	  label: 'Graduate',
+	  value: 'G',
+	  flex: 2
+	}];
+	module.exports = exports['default'];
+
+/***/ },
 /* 167 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports['default'] = [
+	/* {
+	  label: 'Preschool',
+	  abbreviation: 'Pre',
+	  value: 'Pre',
+	  flex: 1,
+	}, */
+	{
+	  label: 'Year 1',
+	  abbreviation: '1',
+	  value: 'K',
+	  flex: 1
+	}, {
+	  label: 'Year 2',
+	  abbreviation: '2',
+	  value: '1',
+	  flex: 1
+	}, {
+	  label: 'Year 3',
+	  abbreviation: '3',
+	  value: '2',
+	  flex: 1
+	}, {
+	  label: 'Year 4',
+	  abbreviation: '4',
+	  value: '3',
+	  flex: 1
+	}, {
+	  label: 'Year 5',
+	  abbreviation: '5',
+	  value: '4',
+	  flex: 1
+	}, {
+	  label: 'Year 6',
+	  abbreviation: '6',
+	  value: '5',
+	  flex: 1
+	}, {
+	  label: 'Year 7',
+	  abbreviation: '7',
+	  value: '6',
+	  flex: 1
+	}, {
+	  label: 'Year 8',
+	  abbreviation: '8',
+	  value: '7',
+	  flex: 1
+	}, {
+	  label: 'Year 9',
+	  abbreviation: '9',
+	  value: '8',
+	  flex: 1
+	}, {
+	  label: 'Year 10',
+	  abbreviation: '10',
+	  value: '9',
+	  flex: 1
+	}, {
+	  label: 'Year 11',
+	  abbreviation: '11',
+	  value: '10',
+	  flex: 1
+	}, {
+	  label: 'Lower 6th',
+	  value: '11',
+	  flex: 1
+	}, {
+	  label: 'Upper 6th',
+	  value: '12',
+	  flex: 2
+	}, {
+	  label: 'Undergraduate',
+	  value: 'HE',
+	  flex: 2
+	}, {
+	  label: 'Graduate',
+	  value: 'G',
+	  flex: 2
+	}];
+	module.exports = exports['default'];
+
+/***/ },
+/* 168 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	exports['default'] = [
+	/* {
+	  label: 'Preschool',
+	  abbreviation: 'Pre',
+	  value: 'Pre',
+	  flex: 1,
+	  category: 'Elementary',
+	  labelClassName: 'green-grade-category'
+	}, */
+	{
+	  label: 'Preschool',
+	  abbreviation: 'Pre',
+	  value: 'K',
+	  flex: 1
+	}, {
+	  label: 'Primary 1',
+	  abbreviation: '1',
+	  value: '1',
+	  flex: 1,
+	  category: 'Primary',
+	  labelClassName: 'green-grade-category'
+	}, {
+	  label: 'Primary 2',
+	  abbreviation: '2',
+	  value: '2',
+	  flex: 1,
+	  category: 'Primary',
+	  labelClassName: 'green-grade-category'
+	}, {
+	  label: 'Primary 3',
+	  abbreviation: '3',
+	  value: '3',
+	  flex: 1,
+	  category: 'Primary',
+	  labelClassName: 'green-grade-category'
+	}, {
+	  label: 'Primary 4',
+	  abbreviation: '4',
+	  value: '4',
+	  flex: 1,
+	  category: 'Primary',
+	  labelClassName: 'green-grade-category'
+	}, {
+	  label: 'Primary 5',
+	  abbreviation: '5',
+	  value: '5',
+	  flex: 1,
+	  category: 'Primary',
+	  labelClassName: 'green-grade-category'
+	}, {
+	  label: 'Primary 6',
+	  abbreviation: '6',
+	  value: '6',
+	  flex: 1,
+	  category: 'Primary',
+	  labelClassName: 'green-grade-category'
+	}, {
+	  label: 'Form 1',
+	  abbreviation: '1',
+	  value: '7',
+	  flex: 1,
+	  category: 'Secondary',
+	  labelClassName: 'red-grade-category'
+	}, {
+	  label: 'Form 2',
+	  abbreviation: '2',
+	  value: '8',
+	  flex: 1,
+	  category: 'Secondary',
+	  labelClassName: 'red-grade-category'
+	}, {
+	  label: 'Form 3',
+	  abbreviation: '9',
+	  value: '9',
+	  flex: 1,
+	  category: 'Secondary',
+	  labelClassName: 'red-grade-category'
+	}, {
+	  label: 'Form 4',
+	  abbreviation: '10',
+	  value: '10',
+	  flex: 1,
+	  category: 'Secondary',
+	  labelClassName: 'red-grade-category'
+	}, {
+	  label: 'Form 5',
+	  abbreviation: '11',
+	  value: '11',
+	  flex: 1,
+	  category: 'Secondary',
+	  labelClassName: 'red-grade-category'
+	}, {
+	  label: 'Form 6',
+	  abbreviation: '12',
+	  value: '12',
+	  flex: 1,
+	  category: 'Secondary',
+	  labelClassName: 'red-grade-category'
+	}, {
+	  label: 'Undergraduate',
+	  value: 'HE',
+	  flex: 2
+	}, {
+	  label: 'Graduate',
+	  value: 'G',
+	  flex: 2
+	}];
+	module.exports = exports['default'];
+
+/***/ },
+/* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseClone = __webpack_require__(168),
-	    bindCallback = __webpack_require__(196);
+	var baseClone = __webpack_require__(170),
+	    bindCallback = __webpack_require__(198);
 	
 	/**
 	 * Creates a deep clone of `value`. If `customizer` is provided it's invoked
@@ -21042,18 +21366,18 @@
 
 
 /***/ },
-/* 168 */
+/* 170 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var arrayCopy = __webpack_require__(169),
-	    arrayEach = __webpack_require__(170),
-	    baseAssign = __webpack_require__(171),
-	    baseForOwn = __webpack_require__(188),
-	    initCloneArray = __webpack_require__(192),
-	    initCloneByTag = __webpack_require__(193),
-	    initCloneObject = __webpack_require__(195),
-	    isArray = __webpack_require__(185),
-	    isObject = __webpack_require__(177);
+	var arrayCopy = __webpack_require__(171),
+	    arrayEach = __webpack_require__(172),
+	    baseAssign = __webpack_require__(173),
+	    baseForOwn = __webpack_require__(190),
+	    initCloneArray = __webpack_require__(194),
+	    initCloneByTag = __webpack_require__(195),
+	    initCloneObject = __webpack_require__(197),
+	    isArray = __webpack_require__(187),
+	    isObject = __webpack_require__(179);
 	
 	/** `Object#toString` result references. */
 	var argsTag = '[object Arguments]',
@@ -21176,7 +21500,7 @@
 
 
 /***/ },
-/* 169 */
+/* 171 */
 /***/ function(module, exports) {
 
 	/**
@@ -21202,7 +21526,7 @@
 
 
 /***/ },
-/* 170 */
+/* 172 */
 /***/ function(module, exports) {
 
 	/**
@@ -21230,11 +21554,11 @@
 
 
 /***/ },
-/* 171 */
+/* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseCopy = __webpack_require__(172),
-	    keys = __webpack_require__(173);
+	var baseCopy = __webpack_require__(174),
+	    keys = __webpack_require__(175);
 	
 	/**
 	 * The base implementation of `_.assign` without support for argument juggling,
@@ -21255,7 +21579,7 @@
 
 
 /***/ },
-/* 172 */
+/* 174 */
 /***/ function(module, exports) {
 
 	/**
@@ -21284,13 +21608,13 @@
 
 
 /***/ },
-/* 173 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getNative = __webpack_require__(174),
-	    isArrayLike = __webpack_require__(179),
-	    isObject = __webpack_require__(177),
-	    shimKeys = __webpack_require__(183);
+	var getNative = __webpack_require__(176),
+	    isArrayLike = __webpack_require__(181),
+	    isObject = __webpack_require__(179),
+	    shimKeys = __webpack_require__(185);
 	
 	/* Native method references for those with the same name as other `lodash` methods. */
 	var nativeKeys = getNative(Object, 'keys');
@@ -21335,10 +21659,10 @@
 
 
 /***/ },
-/* 174 */
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isNative = __webpack_require__(175);
+	var isNative = __webpack_require__(177);
 	
 	/**
 	 * Gets the native function at `key` of `object`.
@@ -21357,11 +21681,11 @@
 
 
 /***/ },
-/* 175 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isFunction = __webpack_require__(176),
-	    isObjectLike = __webpack_require__(178);
+	var isFunction = __webpack_require__(178),
+	    isObjectLike = __webpack_require__(180);
 	
 	/** Used to detect host constructors (Safari > 5). */
 	var reIsHostCtor = /^\[object .+?Constructor\]$/;
@@ -21411,10 +21735,10 @@
 
 
 /***/ },
-/* 176 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObject = __webpack_require__(177);
+	var isObject = __webpack_require__(179);
 	
 	/** `Object#toString` result references. */
 	var funcTag = '[object Function]';
@@ -21455,7 +21779,7 @@
 
 
 /***/ },
-/* 177 */
+/* 179 */
 /***/ function(module, exports) {
 
 	/**
@@ -21489,7 +21813,7 @@
 
 
 /***/ },
-/* 178 */
+/* 180 */
 /***/ function(module, exports) {
 
 	/**
@@ -21507,11 +21831,11 @@
 
 
 /***/ },
-/* 179 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getLength = __webpack_require__(180),
-	    isLength = __webpack_require__(182);
+	var getLength = __webpack_require__(182),
+	    isLength = __webpack_require__(184);
 	
 	/**
 	 * Checks if `value` is array-like.
@@ -21528,10 +21852,10 @@
 
 
 /***/ },
-/* 180 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseProperty = __webpack_require__(181);
+	var baseProperty = __webpack_require__(183);
 	
 	/**
 	 * Gets the "length" property value of `object`.
@@ -21549,7 +21873,7 @@
 
 
 /***/ },
-/* 181 */
+/* 183 */
 /***/ function(module, exports) {
 
 	/**
@@ -21569,7 +21893,7 @@
 
 
 /***/ },
-/* 182 */
+/* 184 */
 /***/ function(module, exports) {
 
 	/**
@@ -21595,14 +21919,14 @@
 
 
 /***/ },
-/* 183 */
+/* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isArguments = __webpack_require__(184),
-	    isArray = __webpack_require__(185),
-	    isIndex = __webpack_require__(186),
-	    isLength = __webpack_require__(182),
-	    keysIn = __webpack_require__(187);
+	var isArguments = __webpack_require__(186),
+	    isArray = __webpack_require__(187),
+	    isIndex = __webpack_require__(188),
+	    isLength = __webpack_require__(184),
+	    keysIn = __webpack_require__(189);
 	
 	/** Used for native method references. */
 	var objectProto = Object.prototype;
@@ -21642,11 +21966,11 @@
 
 
 /***/ },
-/* 184 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isArrayLike = __webpack_require__(179),
-	    isObjectLike = __webpack_require__(178);
+	var isArrayLike = __webpack_require__(181),
+	    isObjectLike = __webpack_require__(180);
 	
 	/** Used for native method references. */
 	var objectProto = Object.prototype;
@@ -21682,12 +22006,12 @@
 
 
 /***/ },
-/* 185 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getNative = __webpack_require__(174),
-	    isLength = __webpack_require__(182),
-	    isObjectLike = __webpack_require__(178);
+	var getNative = __webpack_require__(176),
+	    isLength = __webpack_require__(184),
+	    isObjectLike = __webpack_require__(180);
 	
 	/** `Object#toString` result references. */
 	var arrayTag = '[object Array]';
@@ -21728,7 +22052,7 @@
 
 
 /***/ },
-/* 186 */
+/* 188 */
 /***/ function(module, exports) {
 
 	/** Used to detect unsigned integer values. */
@@ -21758,14 +22082,14 @@
 
 
 /***/ },
-/* 187 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isArguments = __webpack_require__(184),
-	    isArray = __webpack_require__(185),
-	    isIndex = __webpack_require__(186),
-	    isLength = __webpack_require__(182),
-	    isObject = __webpack_require__(177);
+	var isArguments = __webpack_require__(186),
+	    isArray = __webpack_require__(187),
+	    isIndex = __webpack_require__(188),
+	    isLength = __webpack_require__(184),
+	    isObject = __webpack_require__(179);
 	
 	/** Used for native method references. */
 	var objectProto = Object.prototype;
@@ -21828,11 +22152,11 @@
 
 
 /***/ },
-/* 188 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var baseFor = __webpack_require__(189),
-	    keys = __webpack_require__(173);
+	var baseFor = __webpack_require__(191),
+	    keys = __webpack_require__(175);
 	
 	/**
 	 * The base implementation of `_.forOwn` without support for callback
@@ -21851,10 +22175,10 @@
 
 
 /***/ },
-/* 189 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var createBaseFor = __webpack_require__(190);
+	var createBaseFor = __webpack_require__(192);
 	
 	/**
 	 * The base implementation of `baseForIn` and `baseForOwn` which iterates
@@ -21874,10 +22198,10 @@
 
 
 /***/ },
-/* 190 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var toObject = __webpack_require__(191);
+	var toObject = __webpack_require__(193);
 	
 	/**
 	 * Creates a base function for `_.forIn` or `_.forInRight`.
@@ -21907,10 +22231,10 @@
 
 
 /***/ },
-/* 191 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var isObject = __webpack_require__(177);
+	var isObject = __webpack_require__(179);
 	
 	/**
 	 * Converts `value` to an object if it's not one.
@@ -21927,7 +22251,7 @@
 
 
 /***/ },
-/* 192 */
+/* 194 */
 /***/ function(module, exports) {
 
 	/** Used for native method references. */
@@ -21959,10 +22283,10 @@
 
 
 /***/ },
-/* 193 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var bufferClone = __webpack_require__(194);
+	var bufferClone = __webpack_require__(196);
 	
 	/** `Object#toString` result references. */
 	var boolTag = '[object Boolean]',
@@ -22028,7 +22352,7 @@
 
 
 /***/ },
-/* 194 */
+/* 196 */
 /***/ function(module, exports) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {/** Native method references. */
@@ -22055,7 +22379,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 195 */
+/* 197 */
 /***/ function(module, exports) {
 
 	/**
@@ -22077,10 +22401,10 @@
 
 
 /***/ },
-/* 196 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var identity = __webpack_require__(197);
+	var identity = __webpack_require__(199);
 	
 	/**
 	 * A specialized version of `baseCallback` which only supports `this` binding
@@ -22122,7 +22446,7 @@
 
 
 /***/ },
-/* 197 */
+/* 199 */
 /***/ function(module, exports) {
 
 	/**
@@ -22146,333 +22470,6 @@
 	
 	module.exports = identity;
 
-
-/***/ },
-/* 198 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports['default'] = [
-	/* {
-	  label: 'Preschool',
-	  abbreviation: 'Pre',
-	  value: 'Pre',
-	  flex: 1,
-	}, */
-	{
-	  label: 'Kindergarden',
-	  abbreviation: 'K',
-	  value: 'K',
-	  flex: 1
-	}, {
-	  label: '1st grade',
-	  abbreviation: '1',
-	  value: '1',
-	  flex: 1
-	}, {
-	  label: '2nd grade',
-	  abbreviation: '2',
-	  value: '2',
-	  flex: 1
-	}, {
-	  label: '3rd grade',
-	  abbreviation: '3',
-	  value: '3',
-	  flex: 1
-	}, {
-	  label: '4th grade',
-	  abbreviation: '4',
-	  value: '4',
-	  flex: 1
-	}, {
-	  label: '5th grade',
-	  abbreviation: '5',
-	  value: '5',
-	  flex: 1
-	}, {
-	  label: '6th grade',
-	  abbreviation: '6',
-	  value: '6',
-	  flex: 1
-	}, {
-	  label: '7th grade',
-	  abbreviation: '7',
-	  value: '7',
-	  flex: 1
-	}, {
-	  label: '8th grade',
-	  abbreviation: '8',
-	  value: '8',
-	  flex: 1
-	}, {
-	  label: '9th grade',
-	  abbreviation: '9',
-	  value: '9',
-	  flex: 1
-	}, {
-	  label: '10th grade',
-	  abbreviation: '10',
-	  value: '10',
-	  flex: 1
-	}, {
-	  label: '11th grade',
-	  abbreviation: '11',
-	  value: '11',
-	  flex: 1
-	}, {
-	  label: '12th grade',
-	  abbreviation: '12',
-	  value: '12',
-	  flex: 1
-	}, {
-	  label: 'Undergraduate',
-	  value: 'HE',
-	  flex: 2
-	}, {
-	  label: 'Graduate',
-	  value: 'G',
-	  flex: 2
-	}];
-	module.exports = exports['default'];
-
-/***/ },
-/* 199 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports['default'] = [
-	/* {
-	  label: 'Preschool',
-	  abbreviation: 'Pre',
-	  value: 'Pre',
-	  flex: 1,
-	}, */
-	{
-	  label: 'Year 1',
-	  abbreviation: '1',
-	  value: 'K',
-	  flex: 1
-	}, {
-	  label: 'Year 2',
-	  abbreviation: '2',
-	  value: '1',
-	  flex: 1
-	}, {
-	  label: 'Year 3',
-	  abbreviation: '3',
-	  value: '2',
-	  flex: 1
-	}, {
-	  label: 'Year 4',
-	  abbreviation: '4',
-	  value: '3',
-	  flex: 1
-	}, {
-	  label: 'Year 5',
-	  abbreviation: '5',
-	  value: '4',
-	  flex: 1
-	}, {
-	  label: 'Year 6',
-	  abbreviation: '6',
-	  value: '5',
-	  flex: 1
-	}, {
-	  label: 'Year 7',
-	  abbreviation: '7',
-	  value: '6',
-	  flex: 1
-	}, {
-	  label: 'Year 8',
-	  abbreviation: '8',
-	  value: '7',
-	  flex: 1
-	}, {
-	  label: 'Year 9',
-	  abbreviation: '9',
-	  value: '8',
-	  flex: 1
-	}, {
-	  label: 'Year 10',
-	  abbreviation: '10',
-	  value: '9',
-	  flex: 1
-	}, {
-	  label: 'Year 11',
-	  abbreviation: '11',
-	  value: '10',
-	  flex: 1
-	}, {
-	  label: 'Lower 6th',
-	  value: '11',
-	  flex: 1
-	}, {
-	  label: 'Upper 6th',
-	  value: '12',
-	  flex: 2
-	}, {
-	  label: 'Undergraduate',
-	  value: 'HE',
-	  flex: 2
-	}, {
-	  label: 'Graduate',
-	  value: 'G',
-	  flex: 2
-	}];
-	module.exports = exports['default'];
-
-/***/ },
-/* 200 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	exports['default'] = [
-	/* {
-	  label: 'Preschool',
-	  abbreviation: 'Pre',
-	  value: 'Pre',
-	  flex: 1,
-	  category: 'Elementary',
-	  labelClassName: 'green-grade-category'
-	}, */
-	{
-	  label: 'Preschool',
-	  abbreviation: 'Pre',
-	  value: 'K',
-	  flex: 1
-	}, {
-	  label: 'Primary 1',
-	  abbreviation: '1',
-	  value: '1',
-	  flex: 1,
-	  category: 'Primary',
-	  labelClassName: 'green-grade-category'
-	}, {
-	  label: 'Primary 2',
-	  abbreviation: '2',
-	  value: '2',
-	  flex: 1,
-	  category: 'Primary',
-	  labelClassName: 'green-grade-category'
-	}, {
-	  label: 'Primary 3',
-	  abbreviation: '3',
-	  value: '3',
-	  flex: 1,
-	  category: 'Primary',
-	  labelClassName: 'green-grade-category'
-	}, {
-	  label: 'Primary 4',
-	  abbreviation: '4',
-	  value: '4',
-	  flex: 1,
-	  category: 'Primary',
-	  labelClassName: 'green-grade-category'
-	}, {
-	  label: 'Primary 5',
-	  abbreviation: '5',
-	  value: '5',
-	  flex: 1,
-	  category: 'Primary',
-	  labelClassName: 'green-grade-category'
-	}, {
-	  label: 'Primary 6',
-	  abbreviation: '6',
-	  value: '6',
-	  flex: 1,
-	  category: 'Primary',
-	  labelClassName: 'green-grade-category'
-	}, {
-	  label: 'Form 1',
-	  abbreviation: '1',
-	  value: '7',
-	  flex: 1,
-	  category: 'Secondary',
-	  labelClassName: 'red-grade-category'
-	}, {
-	  label: 'Form 2',
-	  abbreviation: '2',
-	  value: '8',
-	  flex: 1,
-	  category: 'Secondary',
-	  labelClassName: 'red-grade-category'
-	}, {
-	  label: 'Form 3',
-	  abbreviation: '9',
-	  value: '9',
-	  flex: 1,
-	  category: 'Secondary',
-	  labelClassName: 'red-grade-category'
-	}, {
-	  label: 'Form 4',
-	  abbreviation: '10',
-	  value: '10',
-	  flex: 1,
-	  category: 'Secondary',
-	  labelClassName: 'red-grade-category'
-	}, {
-	  label: 'Form 5',
-	  abbreviation: '11',
-	  value: '11',
-	  flex: 1,
-	  category: 'Secondary',
-	  labelClassName: 'red-grade-category'
-	}, {
-	  label: 'Form 6',
-	  abbreviation: '12',
-	  value: '12',
-	  flex: 1,
-	  category: 'Secondary',
-	  labelClassName: 'red-grade-category'
-	}, {
-	  label: 'Undergraduate',
-	  value: 'HE',
-	  flex: 2
-	}, {
-	  label: 'Graduate',
-	  value: 'G',
-	  flex: 2
-	}];
-	module.exports = exports['default'];
-
-/***/ },
-/* 201 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	module.exports = function (value) {
-	  return {
-	    'WebkitBoxFlex': value,
-	    'MozBoxFlex': value,
-	    'boxFlex': value,
-	    'msflex': value,
-	    'WebkitFlex': value,
-	    'flex': value
-	  };
-	};
-
-/***/ },
-/* 202 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	module.exports = function (nodeList) {
-	  return [].slice.call(nodeList);
-	};
 
 /***/ }
 /******/ ]);
