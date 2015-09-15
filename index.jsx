@@ -8,7 +8,9 @@ var classnames = require('classnames')
 var flattenCategories = require('./lib/flatten-categories')
 var accumulateFlex = require('./lib/accumulate-flex')
 var flexStyles = require('./lib/flex-styles')
+var toArray = require('./lib/to-array')
 var Knob = require('./knob')
+var find = require('lodash/collection/find')
 
 module.exports = React.createClass({
   displayName: 'GradeRangeInput',
@@ -55,8 +57,8 @@ module.exports = React.createClass({
       var flexTotal = grades.reduce(accumulateFlex, 0)
 
       var gradeNodes = React.findDOMNode(this.refs.grades).childNodes
-      var gradeNodesArray = Array.from(gradeNodes) // TODO: use polyfill for Array.from
-      var currentNode = gradeNodesArray.find(function (node) {
+      var gradeNodesArray = toArray(gradeNodes)
+      var currentNode = find(gradeNodesArray, function (node) {
         var left = React.findDOMNode(node).firstChild.getBoundingClientRect().left
         var right = React.findDOMNode(node).lastChild.getBoundingClientRect().right
         return pageX >= left && pageX <= right

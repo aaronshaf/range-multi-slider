@@ -7,6 +7,7 @@ var classnames = require('classnames')
 var flattenCategories = require('./lib/flatten-categories')
 var accumulateFlex = require('./lib/accumulate-flex')
 var flexStyles = require('./lib/flex-styles')
+var toArray = require('./lib/to-array')
 var Knob = require('./knob')
 
 module.exports = React.createClass({
@@ -54,7 +55,7 @@ module.exports = React.createClass({
       var flexTotal = grades.reduce(accumulateFlex, 0)
 
       var gradeNodes = React.findDOMNode(this.refs.grades).childNodes
-      var gradeNodesArray = Array.from(gradeNodes) // TODO: use polyfill for Array.from
+      var gradeNodesArray = toArray(gradeNodes)
       var currentNode = gradeNodesArray.find(function (node) {
         var left = React.findDOMNode(node).firstChild.getBoundingClientRect().left
         var right = React.findDOMNode(node).lastChild.getBoundingClientRect().right

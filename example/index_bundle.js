@@ -20482,6 +20482,7 @@
 	var flattenCategories = __webpack_require__(163);
 	var accumulateFlex = __webpack_require__(165);
 	var flexStyles = __webpack_require__(201);
+	var toArray = __webpack_require__(202);
 	var Knob = __webpack_require__(164);
 	
 	module.exports = React.createClass({
@@ -20529,7 +20530,7 @@
 	      var flexTotal = grades.reduce(accumulateFlex, 0);
 	
 	      var gradeNodes = React.findDOMNode(this.refs.grades).childNodes;
-	      var gradeNodesArray = Array.from(gradeNodes); // TODO: use polyfill for Array.from
+	      var gradeNodesArray = toArray(gradeNodes);
 	      var currentNode = gradeNodesArray.find(function (node) {
 	        var left = React.findDOMNode(node).firstChild.getBoundingClientRect().left;
 	        var right = React.findDOMNode(node).lastChild.getBoundingClientRect().right;
@@ -22461,6 +22462,16 @@
 	    'WebkitFlex': value,
 	    'flex': value
 	  };
+	};
+
+/***/ },
+/* 202 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = function (nodeList) {
+	  return [].slice.call(nodeList);
 	};
 
 /***/ }
