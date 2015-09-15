@@ -21010,6 +21010,7 @@
 	
 	  render: function render() {
 	    var options = this.props.options;
+	    var upperBound = this.props.upperBound;
 	
 	    var knobClasses = classnames('gri-knob', {
 	      'gri-knob-dragging': this.state.dragging,
@@ -21019,7 +21020,7 @@
 	    var optionComponents = options.map((function (option, index) {
 	      return React.createElement("option", {
 	        key: option.value,
-	        value: index }, option.label || option.abbreviation);
+	        value: index + Number(upperBound || 0) }, option.label || option.abbreviation);
 	    }).bind(this));
 	
 	    return React.createElement("div", {
@@ -21030,7 +21031,7 @@
 	      style: flexStyles(1) }, React.createElement("select", {
 	      "aria-label": this.props.label,
 	      ref: "select",
-	      value: this.props.index - Number(this.props.upperBound || 0),
+	      value: this.props.index,
 	      className: "gri-screenreader-only",
 	      onKeyDown: this.handleKeyDown,
 	      onChange: this.handleSelectChange,
@@ -23100,7 +23101,7 @@
 	}, {
 	  label: 'Lower 6th',
 	  value: '11',
-	  flex: 1
+	  flex: 2
 	}, {
 	  label: 'Upper 6th',
 	  value: '12',
@@ -23197,28 +23198,28 @@
 	  labelClassName: 'red-grade-category'
 	}, {
 	  label: 'Form 3',
-	  abbreviation: '9',
+	  abbreviation: '3',
 	  value: '9',
 	  flex: 1,
 	  category: 'Secondary',
 	  labelClassName: 'red-grade-category'
 	}, {
 	  label: 'Form 4',
-	  abbreviation: '10',
+	  abbreviation: '4',
 	  value: '10',
 	  flex: 1,
 	  category: 'Secondary',
 	  labelClassName: 'red-grade-category'
 	}, {
 	  label: 'Form 5',
-	  abbreviation: '11',
+	  abbreviation: '5',
 	  value: '11',
 	  flex: 1,
 	  category: 'Secondary',
 	  labelClassName: 'red-grade-category'
 	}, {
 	  label: 'Form 6',
-	  abbreviation: '12',
+	  abbreviation: '6',
 	  value: '12',
 	  flex: 1,
 	  category: 'Secondary',

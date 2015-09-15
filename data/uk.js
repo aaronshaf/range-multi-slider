@@ -74,7 +74,7 @@ export default [
   {
     label: 'Lower 6th',
     value: '11',
-    flex: 1,
+    flex: 2,
   },
   {
     label: 'Upper 6th',

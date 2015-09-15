@@ -79,7 +79,7 @@ export default [
   },
   {
     label: 'Form 3',
-    abbreviation: '9',
+    abbreviation: '3',
     value: '9',
     flex: 1,
     category: 'Secondary',
@@ -87,7 +87,7 @@ export default [
   },
   {
     label: 'Form 4',
-    abbreviation: '10',
+    abbreviation: '4',
     value: '10',
     flex: 1,
     category: 'Secondary',
@@ -95,7 +95,7 @@ export default [
   },
   {
     label: 'Form 5',
-    abbreviation: '11',
+    abbreviation: '5',
     value: '11',
     flex: 1,
     category: 'Secondary',
@@ -103,7 +103,7 @@ export default [
   },
   {
     label: 'Form 6',
-    abbreviation: '12',
+    abbreviation: '6',
     value: '12',
     flex: 1,
     category: 'Secondary',
