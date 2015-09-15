@@ -21138,7 +21138,7 @@
 	  },
 	
 	  shouldComponentUpdate: function shouldComponentUpdate(nextProps, nextState) {
-	    return nextProps.index !== this.props.index;
+	    return nextProps.index !== this.props.index || nextState.dragging !== this.state.dragging || nextState.focus !== this.state.focus;
 	  },
 	
 	  getMouseEventMap: function getMouseEventMap() {
@@ -21237,14 +21237,14 @@
 	    return React.createElement("div", {
 	      ref: "div",
 	      onMouseDown: this.handleMouseDown,
-	      className: knobClasses,
-	      onFocus: this.handleSelectFocus,
-	      onBlur: this.handleSelectBlur }, React.createElement("select", {
+	      className: knobClasses }, React.createElement("select", {
 	      ref: "select",
 	      value: this.props.index - Number(this.props.upperBound || 0),
 	      className: "gri-screenreader-only",
 	      onKeyDown: this.handleKeyDown,
 	      onChange: this.handleSelectChange,
+	      onFocus: this.handleSelectFocus,
+	      onBlur: this.handleSelectBlur,
 	      tabIndex: 0 }, optionComponents));
 	  }
 	});
